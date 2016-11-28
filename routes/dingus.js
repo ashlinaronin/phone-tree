@@ -9,7 +9,7 @@ router.post('/welcome', twilio.webhook({validate: false}), function (request, re
         numDigits: '1',
         method: 'POST'
     }, function (node) {
-        node.say('Would you like to listen to a wonderful song? Press 1 for yes. Press 2 for no.');
+        node.say('Welcome to the Dingus Hotline. Would you like to listen to a wonderful song? Press 1 for yes. Press 2 for no.');
     });
     response.send(twiml);
 });
@@ -31,15 +31,15 @@ router.post('/menu', twilio.webhook({validate: false}), function (request, respo
 });
 
 function listenToSandstorm (twiml) {
-    twiml.say('Are you ready? Please wait a few moments while we preapre your song.', { voice: 'alice', language: 'en-GB' });
-    twiml.play('/mp3/sandstorm.mp3');
+    twiml.say('Are you ready? Please wait a few moments while we prepare your song.', { voice: 'alice', language: 'en-GB' });
+    twiml.play('http://ashlin.me/dingus/mp3/sandstorm.mp3');
     twiml.hangup();
     return twiml;
 }
 
 function dontListenToSandstorm (twiml) {
     twiml.say('I\'m sorry.');
-    twiml.play('/mp3/astley.mp3');
+    twiml.play('http://ashlin.me/dingus/mp3/astley.mp3');
     twiml.hangup();
     return twiml;
 }
