@@ -32,14 +32,14 @@ router.post('/menu', twilio.webhook({validate: false}), function (request, respo
 
 function listenToSandstorm (twiml) {
     twiml.say('Are you ready? Please wait a few moments while we prepare your song.', { voice: 'alice', language: 'en-GB' });
-    twiml.play('/mp3/sandstorm.mp3');
+    twiml.play('mp3/sandstorm.mp3');
     twiml.hangup();
     return twiml;
 }
 
 function dontListenToSandstorm (twiml) {
     twiml.say('I\'m sorry.');
-    twiml.play('/mp3/astley.mp3');
+    twiml.play('mp3/astley.mp3');
     twiml.hangup();
     return twiml;
 }
@@ -47,7 +47,7 @@ function dontListenToSandstorm (twiml) {
 function redirectWelcome () {
     var twiml = new twilio.TwimlResponse();
     twiml.say("Returning to the main menu", {voice: "alice", language: "en-GB"});
-    twiml.redirect("/dingus/welcome");
+    twiml.redirect("welcome");
     return twiml;
 }
 
