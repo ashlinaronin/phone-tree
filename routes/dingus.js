@@ -5,7 +5,7 @@ var twilio = require('twilio');
 router.post('/welcome', twilio.webhook({validate: false}), function (request, response) {
     var twiml = new twilio.TwimlResponse();
     twiml.gather({
-        action: '/dingus/menu',
+        action: 'menu',
         numDigits: '1',
         method: 'POST'
     }, function (node) {
