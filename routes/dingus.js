@@ -32,14 +32,14 @@ router.post('/menu', twilio.webhook({validate: false}), function (request, respo
 
 function listenToSandstorm (twiml) {
     twiml.say('Are you ready? Please wait a few moments while we prepare your song.', { voice: 'alice', language: 'en-GB' });
-    twiml.play('http://ashlin.me/dingus/mp3/sandstorm.mp3');
+    twiml.play('/mp3/sandstorm.mp3');
     twiml.hangup();
     return twiml;
 }
 
 function dontListenToSandstorm (twiml) {
     twiml.say('I\'m sorry.');
-    twiml.play('http://ashlin.me/dingus/mp3/astley.mp3');
+    twiml.play('/mp3/astley.mp3');
     twiml.hangup();
     return twiml;
 }
