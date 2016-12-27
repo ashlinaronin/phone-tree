@@ -1,10 +1,10 @@
 const express = require('express');
-var cointreau = express.Router();
+let cointreau = express.Router();
+const baseUrl = '/cointreau/';
 const twilio = require('twilio');
 const horoscope = require('../../services/horoscope');
 const geography = require('../../services/geography');
-
-const relatives = ['aunt', 'uncle', 'cousin', 'brother', 'sister'];
+const agent = require('../../services/agentHelpers');
 
 const sayings = {
     ASK_FOR_BIRTHDAY: "Hello! To give you the best consumer experience', I'll need " +
@@ -12,7 +12,6 @@ const sayings = {
         "as a four digit number? For example, my birthday is May 8th, so I would " +
         "enter zero-five-zero-eight. Go ahead and enter your birthday and then " +
         "press the pound key.",
-    YOUR_SIGN: "Ah! I am sensing that you're a ",
     ASK_FOR_ZIPCODE: "It would also be very helpful to know where you're from. Could you " +
         "please enter your zipcode followed by the pound key? Thanks!",
     IM_LOST: "I have run into an error and I'm really not sure how to proceed. Goodbye?",
@@ -22,44 +21,48 @@ const sayings = {
     };
 
 cointreau.post('/', twilio.webhook({ validate: false }), (req, res) => {
-    var twiml = new twilio.TwimlResponse();
+    let twiml = new twilio.TwimlResponse();
     askForBirthday(twiml);
     res.send(twiml);
 });
 
 cointreau.post('/birthday', twilio.webhook({ validate: false }), (req, res) => {
-    var twiml = new twilio.TwimlResponse();
+    let twiml = new twilio.TwimlResponse();
 
-    var birthday = req.body.Digits;
-    var sign = horoscope.getSign(birthday);
-    twiml.say(sayings.YOUR_SIGN + sign);
+    let birthday = req.body.Digits;
+    let sign = horoscope.getSign(birthday);
+    agent.saveResponse(req.body.Caller, 'sign', sign);
+
+    twiml.say(`Ah! I am sensing that you're a ${sign}.`);
 
     askForZipcode(twiml);
     res.send(twiml);
 });
 
 cointreau.post('/ziptest', twilio.webhook({ validate: false }), (req, res) => {
-    var twiml = new twilio.TwimlResponse();
+    let twiml = new twilio.TwimlResponse();
     askForZipcode(twiml);
     res.send(twiml);
-})
+});
 
 cointreau.post('/zipcode', twilio.webhook({ validate: false }), (req, res) => {
-    var twiml = new twilio.TwimlResponse();
+    let twiml = new twilio.TwimlResponse();
 
-    var zipcode = req.body.Digits;
+    let zipcode = req.body.Digits;
 
-    var phoneLocality = req.body.FromCity.toLowerCase();
+    let phoneLocality = req.body.FromCity.toLowerCase();
 
     geography.getLocality(zipcode)
         .then((locality) => {
-            var relative = getRandomRelative();
+            agent.saveResponse(req.body.Caller, 'locality', locality);
+
+            let relative = agent.randomRelative();
 
             if (locality && relative) {
                 twiml.say(`So you're from ${locality}! What a coincidence.
                     My ${relative} is from there! Small world.`);
             } else {
-                twiml.say(sayings.IM_LOST)
+                twiml.say(sayings.IM_LOST);
                 twiml.hangup();
             }
 
@@ -82,54 +85,26 @@ cointreau.post('/zipcode', twilio.webhook({ validate: false }), (req, res) => {
 });
 
 cointreau.post('/age', twilio.webhook({ validate: false }), (req, res) => {
-    var twiml = new twilio.TwimlResponse();
+    let twiml = new twilio.TwimlResponse();
 
-    var age = req.body.Digits;
-    var relative = getRandomRelative();
+    let age = req.body.Digits;
+    agent.saveResponse(req.body.Caller, 'age', age);
+    let relative = agent.randomRelative();
     twiml.say(`That's crazy! My ${relative} is your age.`);
 
     res.send(twiml);
 });
 
-
-
 function askForBirthday(twiml) {
-    twiml.gather({
-        action: '/cointreau/birthday',
-        numDigits: '4',
-        method: 'POST',
-        timeout: 15,
-        finishOnKey: '#'
-    }, (node) => node.say(sayings.ASK_FOR_BIRTHDAY));
-
-    return twiml;
+    return agent.ask(twiml, baseUrl, 'birthday', sayings.ASK_FOR_BIRTHDAY)
 }
 
 function askForZipcode(twiml) {
-    twiml.gather({
-        action: '/cointreau/zipcode',
-        method: 'POST',
-        timeout: 15,
-        finishOnKey: '#'
-    }, (node) => node.say(sayings.ASK_FOR_ZIPCODE));
-
-    return twiml;
+    return agent.ask(twiml, baseUrl, 'zipcode', sayings.ASK_FOR_ZIPCODE)
 }
 
 function askForAge(twiml) {
-    twiml.gather({
-        action: '/cointreau/age',
-        method: 'POST',
-        timeout: 15,
-        finishOnKey: '#'
-    }, (node) => node.say(sayings.ASK_FOR_AGE));
-
-    return twiml;
+    return agent.ask(twiml, baseUrl, 'age', sayings.ASK_FOR_AGE);
 }
-
-function getRandomRelative() {
-    return relatives[ Math.floor(Math.random() * relatives.length) ];
-}
-
 
 module.exports = cointreau;
