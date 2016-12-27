@@ -1,7 +1,6 @@
 const relatives = ['aunt', 'uncle', 'cousin', 'brother', 'sister', 'daughter', 'son'];
 
 function ask(twiml, agentUrl, question, questionText) {
-    console.log('in ask, q: ' + question + ', text: ' + questionText);
     twiml.gather({
         action: agentUrl + question,
         method: 'POST',
