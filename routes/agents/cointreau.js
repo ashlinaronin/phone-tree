@@ -17,7 +17,10 @@ const sayings = {
     IM_LOST: "I have run into an error and I'm really not sure how to proceed. Goodbye?",
     ASK_FOR_AGE: "I'm starting to get a picture of what you are like. " +
         "I Have just one more question for you though. Approximately how old are you? " +
-        "I won't tell anyone. Please enter your age, then press pound."
+        "I won't tell anyone. Please enter your age, then press pound.",
+    ASK_FOR_MONTHLY_SPENDING: "How much do you spend on personal goods in the course of " +
+        "an average month? This will help me recommend an ideal product for you. Please enter " +
+        "the amount in dollars and press pound."
     };
 
 cointreau.post('/', twilio.webhook({ validate: false }), (req, res) => {
@@ -85,12 +88,38 @@ cointreau.post('/zipcode', twilio.webhook({ validate: false }), (req, res) => {
 cointreau.post('/age', twilio.webhook({ validate: false }), (req, res) => {
     let twiml = new twilio.TwimlResponse();
     let age = req.body.Digits;
-    let relative = agent.randomRelative();
 
     agent.saveResponse(req.body.Caller, 'age', age);
-    twiml.say(`That's crazy! My ${relative} is your age.`);
+
+    if (age % 3 === 0) {
+        twiml.say(`A multiple of three! You must be a very lucky person.`);
+    } else {
+        let relative = agent.randomRelative();
+        twiml.say(`That's crazy! My ${relative} is your age.`);
+    }
+
+    askForMonthlySpending(twiml);
 
     res.send(twiml);
+});
+
+cointreau.post('/monthly-spending', twilio.webhook({ validate: false }), (req,res) => {
+   let twiml = new twilio.TwimlResponse();
+   let monthlySpending = req.body.Digits;
+   agent.saveResponse(req.body.Caller, 'monthly-spending', monthlySpending);
+
+   if (monthlySpending < 2000) {
+       twiml.say(`That's about the range I'd expect for someone your age.`);
+   } else {
+       twiml.say(`You treat yourself well. I respect that.`)
+   }
+
+   twiml.say(`I've saved your profile in our system and will transfer you over to Products
+        to complete your order. It was great talking with you today!`);
+
+   twiml.redirect('/products');
+
+   res.send(twiml);
 });
 
 function askForBirthday(twiml) {
@@ -103,6 +132,10 @@ function askForZipcode(twiml) {
 
 function askForAge(twiml) {
     return agent.ask(twiml, baseUrl, 'age', sayings.ASK_FOR_AGE);
+}
+
+function askForMonthlySpending(twiml) {
+    return agent.ask(twiml, baseUrl, 'monthly-spending', sayings.ASK_FOR_MONTHLY_SPENDING);
 }
 
 module.exports = cointreau;
