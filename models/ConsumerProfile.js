@@ -2,7 +2,13 @@ const mongoose = require('mongoose');
 
 let ConsumerProfileSchema = new mongoose.Schema({
     phone: String,
-    responses: [mongoose.Schema.Types.Mixed]
+    responses: [
+        {
+            question: String,
+            answer: String,
+            timestamp: Date
+        }
+    ]
 });
 
 ConsumerProfileSchema.statics.saveResponse = function(newEntry) {
@@ -16,7 +22,8 @@ ConsumerProfileSchema.statics.saveResponse = function(newEntry) {
 
        let newResponse = {
            question: newEntry.question,
-           answer: newEntry.answer
+           answer: newEntry.answer,
+           timestamp: new Date()
        };
 
        consumerProfile.responses.push(newResponse);
