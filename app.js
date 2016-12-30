@@ -1,20 +1,21 @@
-var express = require('express');
-var path = require('path');
-var mongoose = require('mongoose');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var config = require('./config');
+const express = require('express');
+const path = require('path');
+const mongoose = require('mongoose');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const config = require('./config');
 
-var routes = require('./routes/index');
-var dingus = require('./routes/dingus');
-var cointreau = require('./routes/agents/cointreau');
-var profiles = require('./routes/profiles');
+const routes = require('./routes/index');
+const dingus = require('./routes/dingus');
+const cointreau = require('./routes/agents/cointreau');
+const profiles = require('./routes/profiles');
+const products = require('./routes/products');
 
 mongoose.connect(config.mongoUrl);
 
-var app = express();
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -31,11 +32,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/dingus', dingus);
 app.use('/cointreau', cointreau);
-app.use('/profiles', profiles);
+
+app.use('/products', products);
+
+app.use('/profiles', profiles); // dump out profiles JSON from DB
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  let err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
