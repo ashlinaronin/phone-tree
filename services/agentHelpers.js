@@ -1,3 +1,4 @@
+const ConsumerProfile = require('../models/ConsumerProfile');
 const relatives = ['aunt', 'uncle', 'cousin', 'brother', 'sister', 'daughter', 'son'];
 
 function ask(twiml, agentUrl, question, questionText) {
@@ -19,6 +20,14 @@ function saveResponse(phone, q, a) {
     console.log(`saving response:
         Q. ${q}
         A. ${a}`);
+
+    let response = {
+        'phone': phone,
+        'question': q,
+        'answer': a
+    };
+
+    ConsumerProfile.saveResponse(response);
 }
 
 module.exports = {

@@ -47,9 +47,7 @@ cointreau.post('/ziptest', twilio.webhook({ validate: false }), (req, res) => {
 
 cointreau.post('/zipcode', twilio.webhook({ validate: false }), (req, res) => {
     let twiml = new twilio.TwimlResponse();
-
     let zipcode = req.body.Digits;
-
     let phoneLocality = req.body.FromCity.toLowerCase();
 
     geography.getLocality(zipcode)
@@ -86,10 +84,10 @@ cointreau.post('/zipcode', twilio.webhook({ validate: false }), (req, res) => {
 
 cointreau.post('/age', twilio.webhook({ validate: false }), (req, res) => {
     let twiml = new twilio.TwimlResponse();
-
     let age = req.body.Digits;
-    agent.saveResponse(req.body.Caller, 'age', age);
     let relative = agent.randomRelative();
+
+    agent.saveResponse(req.body.Caller, 'age', age);
     twiml.say(`That's crazy! My ${relative} is your age.`);
 
     res.send(twiml);
