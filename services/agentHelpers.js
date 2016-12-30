@@ -22,7 +22,7 @@ function saveResponse(phone, q, a) {
 }
 
 module.exports = {
-    ask: ask,
-    randomRelative: randomRelative,
-    saveResponse: saveResponse
+    ask,
+    randomRelative,
+    saveResponse
 };

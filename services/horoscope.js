@@ -10,8 +10,8 @@ function calculateSign(month, day) {
 function getSign(birthday) {
     if (birthday.length < 4) return null;
 
-    var month = parseInt(birthday.substr(0,2));
-    var day = parseInt(birthday.substr(2,4));
+    let month = parseInt(birthday.substr(0,2));
+    let day = parseInt(birthday.substr(2,4));
 
     return calculateSign(month, day);
 }
