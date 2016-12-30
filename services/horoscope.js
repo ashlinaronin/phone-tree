@@ -17,5 +17,5 @@ function getSign(birthday) {
 }
 
 module.exports = {
-    getSign: getSign
+    getSign
 };
