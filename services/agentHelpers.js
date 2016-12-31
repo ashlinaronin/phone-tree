@@ -3,17 +3,27 @@ const relatives = ['aunt', 'uncle', 'cousin', 'brother', 'sister', 'daughter', '
 const agents = ['cointreau', 'jenavieve'];
 
 const voices = {
-    'cointreau': { voice: 'man', language: 'de' },
-    'jenavieve': { voice: 'woman', language: 'fr-FR' }
+    'cointreau': { voice: 'man', language: 'en-GB' },
+    'jenavieve': { voice: 'woman', language: 'en-AU' }
 };
 
 function ask(twiml, agent, question, questionText) {
-    const agentUrl = `/${agent}/`;
     twiml.gather({
-        action: agentUrl + question,
+        action: `/${agent}/` + question,
         method: 'POST',
         timeout: 15,
         finishOnKey: '#'
+    }, (node) => node.say(questionText, getVoice(agent)));
+
+    return twiml;
+}
+
+function askOneDigit(twiml, agent, question, questionText) {
+    twiml.gather({
+        action: `/${agent}/` + question,
+        method: 'POST',
+        timeout: 10,
+        numDigits: 1
     }, (node) => node.say(questionText, getVoice(agent)));
 
     return twiml;
@@ -47,6 +57,7 @@ function saveResponse(phone, q, a) {
 
 module.exports = {
     ask,
+    askOneDigit,
     getVoice,
     randomRelative,
     randomAgent,
