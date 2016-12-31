@@ -122,7 +122,7 @@ cointreau.post('/monthly-spending', twilio.webhook({ validate: false }), (req,re
 
    let productsExtension = extensions.getDepartmentExtension('products');
 
-   twiml.play({digits: productsExtension});
+   twiml.play({ digits: productsExtension });
 
    twiml.redirect('/products');
 
