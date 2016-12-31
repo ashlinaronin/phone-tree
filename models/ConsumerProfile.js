@@ -5,7 +5,7 @@ let ConsumerProfileSchema = new mongoose.Schema({
     responses: [
         {
             question: String,
-            answer: String,
+            answer: mongoose.Schema.Types.Mixed,
             timestamp: Date
         }
     ]
@@ -32,7 +32,11 @@ ConsumerProfileSchema.statics.saveResponse = function(newEntry) {
            if (err) {
                console.log('error saving consumer profile...');
            } else {
-               console.log('saved consumer profile');
+               console.log(
+                   `saved new response to consumer profile:
+                    Q. ${newResponse.question}
+                    A. ${newResponse.answer}`
+               );
            }
        })
     });
