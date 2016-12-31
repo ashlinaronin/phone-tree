@@ -1,10 +1,13 @@
 const express = require('express');
-let cointreau = express.Router();
-const baseUrl = '/cointreau/';
 const twilio = require('twilio');
 const horoscope = require('../../services/horoscope');
 const geography = require('../../services/geography');
 const agent = require('../../services/agentHelpers');
+const extensions = require('../../services/extensions');
+let cointreau = express.Router();
+
+const COINTREAU = 'cointreau';
+const COINTREAU_VOICE = agent.getVoice(COINTREAU);
 
 const sayings = {
     ASK_FOR_BIRTHDAY: "Hello! To give you the best consumer experience', I'll need " +
@@ -36,7 +39,7 @@ cointreau.post('/birthday', twilio.webhook({ validate: false }), (req, res) => {
     let sign = horoscope.getSign(birthday);
     agent.saveResponse(req.body.Caller, 'sign', sign);
 
-    twiml.say(`Ah! I am sensing that you're a ${sign}.`);
+    twiml.say(`Ah! I am sensing that you're a ${sign}.`, COINTREAU_VOICE);
 
     askForZipcode(twiml);
     res.send(twiml);
@@ -61,7 +64,7 @@ cointreau.post('/zipcode', twilio.webhook({ validate: false }), (req, res) => {
 
             if (locality && relative) {
                 twiml.say(`So you're from ${locality}! What a coincidence.
-                    My ${relative} is from there! Small world.`);
+                    My ${relative} is from there! Small world.`, COINTREAU_VOICE);
             } else {
                 twiml.say(sayings.IM_LOST);
                 twiml.hangup();
@@ -70,7 +73,7 @@ cointreau.post('/zipcode', twilio.webhook({ validate: false }), (req, res) => {
             if (locality.toLowerCase() !== phoneLocality) {
                 twiml.say(`Here's a fun fact! Your phone seems to be
                     from ${phoneLocality}, but you're from ${locality}...
-                    I can dig it though!`)
+                    I can dig it though!`, COINTREAU_VOICE)
             }
 
             askForAge(twiml);
@@ -79,7 +82,7 @@ cointreau.post('/zipcode', twilio.webhook({ validate: false }), (req, res) => {
         })
         .catch((error) => {
             console.log(error);
-            twiml.say(sayings.IM_LOST);
+            twiml.say(sayings.IM_LOST, COINTREAU_VOICE);
             twiml.hangup();
             res.send(twiml);
         });
@@ -92,10 +95,10 @@ cointreau.post('/age', twilio.webhook({ validate: false }), (req, res) => {
     agent.saveResponse(req.body.Caller, 'age', age);
 
     if (age % 3 === 0) {
-        twiml.say(`A multiple of three! You must be a very lucky person.`);
+        twiml.say(`A multiple of three! You must be a very lucky person.`, COINTREAU_VOICE);
     } else {
         let relative = agent.randomRelative();
-        twiml.say(`That's crazy! My ${relative} is your age.`);
+        twiml.say(`That's crazy! My ${relative} is your age.`, COINTREAU_VOICE);
     }
 
     askForMonthlySpending(twiml);
@@ -109,13 +112,17 @@ cointreau.post('/monthly-spending', twilio.webhook({ validate: false }), (req,re
    agent.saveResponse(req.body.Caller, 'monthly-spending', monthlySpending);
 
    if (monthlySpending < 2000) {
-       twiml.say(`That's about the range I'd expect for someone your age.`);
+       twiml.say(`That's about the range I'd expect for someone your age.`, COINTREAU_VOICE);
    } else {
-       twiml.say(`You treat yourself well. I respect that.`)
+       twiml.say(`You treat yourself well. I respect that.`, COINTREAU_VOICE)
    }
 
    twiml.say(`I've saved your profile in our system and will transfer you over to Products
-        to complete your order. It was great talking with you today!`);
+        to complete your order. It was great talking with you today!`, COINTREAU_VOICE);
+
+   let productsExtension = extensions.getDepartmentExtension('products');
+
+   twiml.play({digits: productsExtension});
 
    twiml.redirect('/products');
 
@@ -123,19 +130,19 @@ cointreau.post('/monthly-spending', twilio.webhook({ validate: false }), (req,re
 });
 
 function askForBirthday(twiml) {
-    return agent.ask(twiml, baseUrl, 'birthday', sayings.ASK_FOR_BIRTHDAY)
+    return agent.ask(twiml, COINTREAU, 'birthday', sayings.ASK_FOR_BIRTHDAY)
 }
 
 function askForZipcode(twiml) {
-    return agent.ask(twiml, baseUrl, 'zipcode', sayings.ASK_FOR_ZIPCODE)
+    return agent.ask(twiml, COINTREAU, 'zipcode', sayings.ASK_FOR_ZIPCODE)
 }
 
 function askForAge(twiml) {
-    return agent.ask(twiml, baseUrl, 'age', sayings.ASK_FOR_AGE);
+    return agent.ask(twiml, COINTREAU, 'age', sayings.ASK_FOR_AGE);
 }
 
 function askForMonthlySpending(twiml) {
-    return agent.ask(twiml, baseUrl, 'monthly-spending', sayings.ASK_FOR_MONTHLY_SPENDING);
+    return agent.ask(twiml, COINTREAU, 'monthly-spending', sayings.ASK_FOR_MONTHLY_SPENDING);
 }
 
 module.exports = cointreau;
