@@ -10,6 +10,7 @@ const config = require('./config');
 const routes = require('./routes/index');
 const dingus = require('./routes/dingus');
 const cointreau = require('./routes/agents/cointreau');
+const jenavieve = require('./routes/agents/jenavieve');
 const profiles = require('./routes/profiles');
 const products = require('./routes/products');
 
@@ -32,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/dingus', dingus);
 app.use('/cointreau', cointreau);
+app.use('/jenavieve', jenavieve);
 
 app.use('/products', products);
 
