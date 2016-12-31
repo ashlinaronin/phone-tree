@@ -1,19 +1,118 @@
 const express = require('express');
-let jenavieve = express.Router();
-const baseUrl = '/jenavieve/';
 const twilio = require('twilio');
 const agent = require('../../services/agentHelpers');
+let jenavieve = express.Router();
 
-const JENNY_VOICE = agent.getVoice('jenavieve');
+const JENAVIEVE = 'jenavieve';
+const JENAVIEVE_VOICE = agent.getVoice(JENAVIEVE);
 
 const sayings = {
-
+    ASK_FOR_RELATIONSHIP_STATUS: `Hello, my name is Jennaveeve! You can call me Jenny if you like.
+        I love getting to know our new customers. I have just a few questions for you
+        to get an idea of what you're looking for. First of all, what's your current
+        relationship status on a scale of 1 to 5? Press 1 for totally single, 5 for, like,
+        taken, or any other number in between.`,
+    ASK_FOR_DATING_FREQUENCY: `How many dates would you say you go on in the course of an average month?
+        It doesn't have to be exact. Enter a reasonable guess and press pound.`,
+    ASK_FOR_LIVING_SITUATION: `If you don't mind me asking, do you currently share a living space
+        with your partner? Press 1 for yes, any other key for no.`,
+    ASK_ABOUT_DATING_OPTIMISM: `On a scale of one to five, do you feel generally optimistic about your
+        experience on the dating scene? One being very pessimistic, five being very optimistic.`
 };
 
 jenavieve.post('/', twilio.webhook({ validate: false }), (req, res) => {
     let twiml = new twilio.TwimlResponse();
-    twiml.say(`Hello, my name is Jennaveeve! You can call me Jenny if you like.`, JENNY_VOICE);
+    askForRelationshipStatus(twiml);
     res.send(twiml);
 });
+
+jenavieve.post('/relationship-status', twilio.webhook({ validate: false }), (req, res) => {
+   let twiml = new twilio.TwimlResponse();
+   let status = parseInt(req.body.Digits);
+   
+   agent.saveResponse(req.body.Caller, 'relationship-status', status);
+
+   if (status === 1) {
+       twiml.say(`Oooh, you're single! Way to be.`, JENAVIEVE_VOICE);
+       askForDatingFrequency(twiml);
+   } else if (status === 2) {
+       twiml.say(`I get it, ambiguity is totally in.`, JENAVIEVE_VOICE);
+       askForDatingFrequency(twiml);
+   } else if (status > 3) {
+       twiml.say(`So you're somewhat hitched. It's great to have a partner in life!
+            I've been seeing someone for awhile too.`, JENAVIEVE_VOICE);
+       askForLivingSituation(twiml);
+   }
+
+   res.send(twiml);
+});
+
+jenavieve.post('/dating-frequency', twilio.webhook({ validate: false }), (req, res) => {
+   let twiml = new twilio.TwimlResponse();
+   let frequency = req.body.Digits;
+   
+   agent.saveResponse(req.body.Caller, 'dating-frequency', frequency);
+
+   if (frequency === 0) {
+       twiml.say(`I'm sorry to hear that. I'm sure things will look up for you--
+            if you want to be more active, that is. Everybody has their own priorities.`, JENAVIEVE_VOICE);
+   } else if (frequency < 5) {
+        twiml.say(`Nice! Quality over quantity!`, JENAVIEVE_VOICE);
+   } else {
+       twiml.say(`${frequency} dates a month! Not bad, not bad.`, JENAVIEVE_VOICE);
+   }
+   
+   askAboutDatingScene(twiml);
+
+   res.send(twiml);
+});
+
+jenavieve.post('/lives-with-partner', twilio.webhook({ validate: false }), (req, res) => {
+   let twiml = new twilio.TwimlResponse();
+   let livesWithPartner = req.body.Digits;
+   const LIVES_WITH_PARTNER_CODE = 1;
+
+   if (livesWithPartner === LIVES_WITH_PARTNER_CODE) {
+       console.log('might have difficulty saving bool to string field', JENAVIEVE_VOICE);
+       agent.saveResponse(req.body.Caller, 'lives-with-partner', true);
+       twiml.say(`I think that's really great. Stability is important.`, JENAVIEVE_VOICE);
+   } else {
+       twiml.say(`That's awesome! Great that you can respect each other's space
+            and still be intimate.`, JENAVIEVE_VOICE);
+   }
+
+   res.send(twiml);
+});
+
+jenavieve.post('/dating-optimism', twilio.webhook({ validate: false }), (req, res) => {
+   let twiml = new twilio.TwimlResponse();
+   let optimism = req.body.Digits;
+
+   agent.saveResponse(req.body.Caller, 'dating-optimism', optimism);
+
+   if (optimism < 3) {
+       twiml.say(`I'm sorry that you feel that way. It can be tough out there.`, JENAVIEVE_VOICE);
+   } else {
+       twiml.say(`I'm so happy that you have a good attitude. That really goes a long way.`, JENAVIEVE_VOICE);
+   }
+
+   res.send(twiml);
+});
+
+function askForRelationshipStatus(twiml) {
+    return agent.askOneDigit(twiml, JENAVIEVE, 'relationship-status', sayings.ASK_FOR_RELATIONSHIP_STATUS);
+}
+
+function askForDatingFrequency(twiml) {
+    return agent.ask(twiml, JENAVIEVE, 'dating-frequency', sayings.ASK_FOR_DATING_FREQUENCY);
+}
+
+function askForLivingSituation(twiml) {
+    return agent.askOneDigit(twiml, JENAVIEVE, 'lives-with-partner', sayings.ASK_FOR_LIVING_SITUATION);
+}
+
+function askAboutDatingScene(twiml) {
+    return agent.askOneDigit(twiml, JENAVIEVE, 'dating-optimism', sayings.ASK_ABOUT_DATING_OPTIMISM);
+}
 
 module.exports = jenavieve;
