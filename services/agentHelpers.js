@@ -1,10 +1,11 @@
 const ConsumerProfile = require('../models/ConsumerProfile');
 const relatives = ['aunt', 'uncle', 'cousin', 'brother', 'sister', 'daughter', 'son'];
-const agents = ['cointreau', 'jenavieve'];
+const agents = ['cointreau', 'jenavieve', 'ricardo'];
 
 const voices = {
     'cointreau': { voice: 'man', language: 'en-GB' },
-    'jenavieve': { voice: 'woman', language: 'en-AU' }
+    'jenavieve': { voice: 'woman', language: 'en-AU' },
+    'ricardo': { voice: 'man', language: 'en-US' }
 };
 
 function ask(twiml, agent, question, questionText) {

@@ -11,6 +11,7 @@ const routes = require('./routes/index');
 const dingus = require('./routes/dingus');
 const cointreau = require('./routes/agents/cointreau');
 const jenavieve = require('./routes/agents/jenavieve');
+const ricardo = require('./routes/agents/ricardo');
 const profiles = require('./routes/profiles');
 const products = require('./routes/products');
 
@@ -34,6 +35,7 @@ app.use('/', routes);
 app.use('/dingus', dingus);
 app.use('/cointreau', cointreau);
 app.use('/jenavieve', jenavieve);
+app.use('/ricardo', ricardo);
 
 app.use('/products', products);
 
