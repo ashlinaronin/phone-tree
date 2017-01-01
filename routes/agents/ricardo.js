@@ -19,3 +19,8 @@ ricardo.post('/', twilio.webhook({ validate: false }), (req, res) => {
 });
 
 module.exports = ricardo;
+
+
+// NOTES: uses sports analogies whenever possible, doesn't follow up directly to questions,
+// just proceeds to the next
+// can use recordings for products to look up later

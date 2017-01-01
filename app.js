@@ -6,14 +6,7 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const config = require('./config');
-
 const routes = require('./routes/index');
-const dingus = require('./routes/dingus');
-const cointreau = require('./routes/agents/cointreau');
-const jenavieve = require('./routes/agents/jenavieve');
-const ricardo = require('./routes/agents/ricardo');
-const profiles = require('./routes/profiles');
-const products = require('./routes/products');
 
 mongoose.connect(config.mongoUrl);
 
@@ -32,14 +25,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/dingus', dingus);
-app.use('/cointreau', cointreau);
-app.use('/jenavieve', jenavieve);
-app.use('/ricardo', ricardo);
-
-app.use('/products', products);
-
-app.use('/profiles', profiles); // dump out profiles JSON from DB
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -10,7 +10,7 @@ const voices = {
 
 function ask(twiml, agent, question, questionText) {
     twiml.gather({
-        action: `/${agent}/` + question,
+        action: `/agents/${agent}/` + question,
         method: 'POST',
         timeout: 15,
         finishOnKey: '#'
@@ -21,7 +21,7 @@ function ask(twiml, agent, question, questionText) {
 
 function askOneDigit(twiml, agent, question, questionText) {
     twiml.gather({
-        action: `/${agent}/` + question,
+        action: `/agents/${agent}/` + question,
         method: 'POST',
         timeout: 10,
         numDigits: 1
