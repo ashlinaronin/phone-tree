@@ -1,6 +1,7 @@
 const ConsumerProfile = require('../models/ConsumerProfile');
 const relatives = ['aunt', 'uncle', 'cousin', 'brother', 'sister', 'daughter', 'son'];
 const agents = ['cointreau', 'jenavieve', 'ricardo'];
+const baseUrl = require('../config').baseUrl;
 
 const voices = {
     'cointreau': { voice: 'man', language: 'en-GB' },
@@ -10,7 +11,7 @@ const voices = {
 
 function ask(twiml, agent, question, questionText) {
     twiml.gather({
-        action: `/agents/${agent}/` + question,
+        action: `${baseUrl}/agents/${agent}/` + question,
         method: 'POST',
         timeout: 15,
         finishOnKey: '#'
@@ -21,7 +22,7 @@ function ask(twiml, agent, question, questionText) {
 
 function askOneDigit(twiml, agent, question, questionText) {
     twiml.gather({
-        action: `/agents/${agent}/` + question,
+        action: `${baseUrl}/agents/${agent}/` + question,
         method: 'POST',
         timeout: 10,
         numDigits: 1

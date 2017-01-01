@@ -4,6 +4,7 @@ const horoscope = require('../../services/horoscope');
 const geography = require('../../services/geography');
 const agent = require('../../services/agentHelpers');
 const extensions = require('../../services/extensions');
+const baseUrl = require('../../config').baseUrl;
 let cointreau = express.Router();
 
 const COINTREAU = 'cointreau';
@@ -124,7 +125,7 @@ cointreau.post('/monthly-spending', twilio.webhook({ validate: false }), (req,re
 
    twiml.play({ digits: productsExtension });
 
-   twiml.redirect('/products');
+   twiml.redirect(`${baseUrl}/products`);
 
    res.send(twiml);
 });

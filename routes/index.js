@@ -3,6 +3,7 @@ let router = express.Router();
 const twilio = require('twilio');
 const agent = require('../services/agentHelpers');
 const extensions = require('../services/extensions');
+const baseUrl = require('../config').baseUrl;
 
 const dingus = require('./dingus');
 const agents = require('./agents');
@@ -22,7 +23,7 @@ router.post('/', twilio.webhook({ validate: false }), (req, res) => {
 
     twiml.play({ digits: agentExtension });
 
-    twiml.redirect(`/agents/${ agent.randomAgent() }`);
+    twiml.redirect(`${baseUrl}/agents/${agent.randomAgent()}`);
 
     res.send(twiml);
 });

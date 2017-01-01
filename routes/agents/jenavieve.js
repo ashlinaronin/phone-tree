@@ -2,6 +2,7 @@ const express = require('express');
 const twilio = require('twilio');
 const agent = require('../../services/agentHelpers');
 const extensions = require('../../services/extensions');
+const baseUrl = require('../../config').baseUrl;
 let jenavieve = express.Router();
 
 const JENAVIEVE = 'jenavieve';
@@ -165,7 +166,7 @@ function transferToProducts(twiml) {
     let productsExtension = extensions.getDepartmentExtension('products');
     twiml.say(sayings.THANK_YOU, JENAVIEVE_VOICE);
     twiml.play({ digits: productsExtension });
-    twiml.redirect('/products');
+    twiml.redirect(`${baseUrl}/products`);
 
     return twiml;
 }
