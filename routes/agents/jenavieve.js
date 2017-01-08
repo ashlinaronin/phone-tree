@@ -129,7 +129,7 @@ jenavieve.post('/love-style', twilio.webhook({ validate: false }), (req, res) =>
        agent.saveResponse(req.body.Caller, 'love-style', loveStyle.name);
 
        twiml.say(`Ah, you're ${ loveStyle.pronunciation } too! Good to know!`, JENAVIEVE_VOICE);
-       transferToProducts(twiml);
+       agent.transferToProducts(twiml, JENAVIEVE, sayings.THANK_YOU);
    } else {
        // TODO: don't repeat whole shpiel again, just ask the question
        askAboutLoveStyle(twiml);
@@ -160,15 +160,6 @@ function askAboutLoveStyle(twiml) {
 
 function getLoveStyle(digit) {
     return LOVE_STYLES.hasOwnProperty(digit) ? LOVE_STYLES[digit] : null;
-}
-
-function transferToProducts(twiml) {
-    let productsExtension = extensions.getDepartmentExtension('products');
-    twiml.say(sayings.THANK_YOU, JENAVIEVE_VOICE);
-    twiml.play({ digits: productsExtension });
-    twiml.redirect(`${baseUrl}/products`);
-
-    return twiml;
 }
 
 module.exports = jenavieve;

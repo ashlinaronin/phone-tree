@@ -24,7 +24,9 @@ const sayings = {
         "I won't tell anyone. Please enter your age, then press pound.",
     ASK_FOR_MONTHLY_SPENDING: "How much do you spend on personal goods in the course of " +
         "an average month? This will help me recommend an ideal product for you. Please enter " +
-        "the amount in dollars and press pound."
+        "the amount in dollars and press pound.",
+    THANK_YOU: `I've saved your profile in our system and will transfer you over to Products
+        to complete your order. It was great talking with you today!`
     };
 
 cointreau.post('/', twilio.webhook({ validate: false }), (req, res) => {
@@ -118,15 +120,7 @@ cointreau.post('/monthly-spending', twilio.webhook({ validate: false }), (req,re
        twiml.say(`You treat yourself well. I respect that.`, COINTREAU_VOICE)
    }
 
-   twiml.say(`I've saved your profile in our system and will transfer you over to Products
-        to complete your order. It was great talking with you today!`, COINTREAU_VOICE);
-
-   let productsExtension = extensions.getDepartmentExtension('products');
-
-   twiml.play({ digits: productsExtension });
-
-   twiml.redirect(`${baseUrl}/products`);
-
+   agent.transferToProducts(twiml, COINTREAU, sayings.THANK_YOU);
    res.send(twiml);
 });
 
