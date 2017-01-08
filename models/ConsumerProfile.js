@@ -40,8 +40,13 @@ ConsumerProfileSchema.statics.saveResponse = function(newEntry) {
            }
        })
     });
+};
 
-
+ConsumerProfileSchema.statics.retrieveResponse = function(phone, q) {
+    // TODO: will this work? callback structure
+    ConsumerProfile.findOne({ phone: phone, question: q }, (err, doc) => {
+        return doc;
+    });
 };
 
 let ConsumerProfile = mongoose.model('ConsumerProfile', ConsumerProfileSchema);

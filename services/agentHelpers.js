@@ -1,4 +1,5 @@
 const ConsumerProfile = require('../models/ConsumerProfile');
+const extensions = require('./extensions');
 const relatives = ['aunt', 'uncle', 'cousin', 'brother', 'sister', 'daughter', 'son'];
 const agents = ['cointreau', 'jenavieve', 'ricardo'];
 const baseUrl = require('../config').baseUrl;
@@ -57,11 +58,25 @@ function saveResponse(phone, q, a) {
     ConsumerProfile.saveResponse(response);
 }
 
+function retrieveResponse(phone, q) {
+    return ConsumerProfile.retrieveResponse(phone, q);
+}
+
+function transferToProducts(twiml, agent, thankYouMessage) {
+    let productsExtension = extensions.getDepartmentExtension('products');
+    twiml.say(thankYouMessage, getVoice(agent));
+    twiml.play({ digits: productsExtension });
+    twiml.redirect(`${baseUrl}/products`);
+    return twiml;
+}
+
 module.exports = {
     ask,
     askOneDigit,
     getVoice,
     randomRelative,
     randomAgent,
-    saveResponse
+    saveResponse,
+    retrieveResponse,
+    transferToProducts
 };
