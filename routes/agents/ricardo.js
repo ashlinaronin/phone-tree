@@ -1,6 +1,6 @@
 const express = require('express');
 const twilio = require('twilio');
-const agent = require('../../services/agentHelpers');
+const agent = require('../../services/agent-helpers');
 const extensions = require('../../services/extensions');
 let ricardo = express.Router();
 
@@ -136,7 +136,7 @@ ricardo.post('/dietary-restrictions', twilio.webhook({ validate: false }), (req,
         twiml.say(`Wow. Haha. Can you eat anything?`, RICARDO_VOICE);
     }
 
-    if (dietaryRestrictionList.indexOf(DIETARY_RESTRICTIONS.sugar) > -1) {
+    if (dietaryRestrictionList.contains(DIETARY_RESTRICTIONS.sugar) > -1) {
         twiml.say(`Word, I'm trying to stay away from sugar too.`, RICARDO_VOICE);
     }
 

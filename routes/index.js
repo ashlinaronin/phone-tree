@@ -1,13 +1,14 @@
 const express = require('express');
 let router = express.Router();
 const twilio = require('twilio');
-const agent = require('../services/agentHelpers');
+const agent = require('../services/agent-helpers');
 const extensions = require('../services/extensions');
 const baseUrl = require('../config').baseUrl;
 
 const dingus = require('./dingus');
 const agents = require('./agents');
 const profiles = require('./profiles');
+const productDetails = require('./product-details');
 const products = require('./products');
 
 router.post('/', twilio.webhook({ validate: false }), (req, res) => {
@@ -31,6 +32,7 @@ router.post('/', twilio.webhook({ validate: false }), (req, res) => {
 router.use('/dingus', dingus);
 router.use('/agents', agents);
 router.use('/products', products);
+router.use('/product-details', productDetails);
 router.use('/profiles', profiles); // dump out profiles JSON from DB
 
 module.exports = router;

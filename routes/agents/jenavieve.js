@@ -1,6 +1,6 @@
 const express = require('express');
 const twilio = require('twilio');
-const agent = require('../../services/agentHelpers');
+const agent = require('../../services/agent-helpers');
 const extensions = require('../../services/extensions');
 const baseUrl = require('../../config').baseUrl;
 let jenavieve = express.Router();
