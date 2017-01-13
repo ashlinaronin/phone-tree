@@ -1,5 +1,10 @@
 const mongoose = require('mongoose');
 
+let ProductSchema = new mongoose.Schema({
+    shape: String,
+    color: Number
+});
+
 let ConsumerProfileSchema = new mongoose.Schema({
     phone: String,
     responses: [
@@ -8,7 +13,8 @@ let ConsumerProfileSchema = new mongoose.Schema({
             answer: mongoose.Schema.Types.Mixed,
             timestamp: Date
         }
-    ]
+    ],
+    products: [ProductSchema]
 });
 
 ConsumerProfileSchema.statics.saveResponse = function(newEntry) {
