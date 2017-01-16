@@ -10,6 +10,7 @@ const agents = require('./agents');
 const profiles = require('./profiles');
 const productDetails = require('./product-details');
 const products = require('./products');
+const test = require('./test');
 
 router.post('/', twilio.webhook({ validate: false }), (req, res) => {
     let twiml = new twilio.TwimlResponse();
@@ -34,5 +35,6 @@ router.use('/agents', agents);
 router.use('/products', products);
 router.use('/product-details', productDetails);
 router.use('/profiles', profiles); // dump out profiles JSON from DB
+router.use('/test', test);
 
 module.exports = router;
