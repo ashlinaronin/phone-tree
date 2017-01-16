@@ -12,16 +12,16 @@ const sayings = {
 };
 
 const colors = {
-    0: 'red',
-    1: 'white',
-    2: 'blue',
-    3: 'black',
-    4: 'orange',
-    5: 'green',
-    6: 'yellow',
-    7: 'pink',
-    8: 'brown',
-    9: 'mauve'
+    0: { name: 'red', hex: '#ff0000' },
+    1: { name: 'white', hex: '#ffffff' },
+    2: { name: 'blue', hex: '#0000ff' },
+    3: { name: 'black', hex: '#000000' },
+    4: { name: 'orange', hex: '#ffa500' },
+    5: { name: 'green', hex: '#00ff00' },
+    6: { name: 'yellow', hex: '#ffff00' },
+    7: { name: 'pink', hex: '#ff0080' },
+    8: { name: 'brown', hex: '#654321' },
+    9: { name: 'mauve', hex: '#b784a7' }
 };
 
 products.post('/', twilio.webhook({validate: false}), (req, res) => {
@@ -41,40 +41,19 @@ products.post('/favorite-color', twilio.webhook({ validate: false }), (req, res,
     let twiml = new twilio.TwimlResponse();
     let favoriteColor = colors[req.body.Digits];
 
-    agent.saveResponse(req.body.Caller, 'favorite-color', favoriteColor);
-
     ConsumerProfile.saveProduct({
         timestamp: new Date(),
         phone: req.body.Caller,
-        color: favoriteColor,
+        color: favoriteColor.hex,
         shape: 'cactus'
     });
 
-    twiml.say(`${favoriteColor}? Perfect, thank you so much. You should receive your order soon.
+    twiml.say(`${favoriteColor.name}? Perfect, thank you so much. You should receive your order soon.
         Have a nice day!`);
 
     sms.sendProduct(req.body.Caller, 'http://lorempixel.com/400/200/food/');
 
     res.send(twiml);
 });
-
-
-products.get('/test-sms', function(req, res, next) {
-    sms.sendProduct('+15093414961', 'http://587f4810.ngrok.io/')
-        .then(msg => res.send(msg))
-        .catch(err => res.status(500).send(err));
-});
-
-products.get('/save-product-test', function(req, res, next) {
-
-    ConsumerProfile.saveProduct({
-        phone: '+5093414961',
-        timestamp: new Date(),
-        color: 0x00ff00,
-        shape: 'cactus'
-    });
-
-});
-
 
 module.exports = products;
