@@ -1,8 +1,11 @@
+// TODO: use promises for all mongoose calls
+
 const mongoose = require('mongoose');
 
 let ProductSchema = new mongoose.Schema({
     shape: String,
-    color: Number
+    color: Number,
+    timestamp: Date
 });
 
 let ConsumerProfileSchema = new mongoose.Schema({
@@ -52,6 +55,24 @@ ConsumerProfileSchema.statics.retrieveResponse = function(phone, q) {
     // TODO: will this work? callback structure
     ConsumerProfile.findOne({ phone: phone, question: q }, (err, doc) => {
         return doc;
+    });
+};
+
+ConsumerProfileSchema.statics.saveProduct = function(productModel) {
+    ConsumerProfile.findOne({ phone: productModel.phone }, (err, profile) => {
+
+        if (err) {
+            console.log(err);
+        }
+        // TODO: eventually check for duplicate product before adding
+
+        profile.products.push({
+            shape: productModel.shape,
+            color: productModel.color,
+            timestamp: productModel.timestamp
+        });
+        profile.save();
+
     });
 };
 

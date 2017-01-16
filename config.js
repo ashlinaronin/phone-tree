@@ -7,5 +7,9 @@ cfg.mongoUrl = process.env.MONGO_URL || 'mongodb://localhost/';
 
 cfg.baseUrl = process.env.BASE_URL || '';
 
+cfg.TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
+cfg.TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
+cfg.TWILIO_FROM_PHONE = process.env.TWILIO_FROM_PHONE;
+
 // Export configuration object
 module.exports = cfg;
