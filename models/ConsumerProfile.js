@@ -1,5 +1,3 @@
-// TODO: use promises for all mongoose calls
-
 const mongoose = require('mongoose');
 
 let ProductSchema = new mongoose.Schema({
@@ -21,41 +19,36 @@ let ConsumerProfileSchema = new mongoose.Schema({
 });
 
 ConsumerProfileSchema.statics.saveResponse = function(newEntry) {
-    // TODO: use promises?
-    let consumerProfile;
+    let newResponse = {
+        question: newEntry.question,
+        answer: newEntry.answer,
+        timestamp: new Date()
+    };
 
-    ConsumerProfile.findOne({
-        phone: newEntry.phone
-    }, function (err, doc) {
-       consumerProfile = doc || new ConsumerProfile({ phone: newEntry.phone });
-
-       let newResponse = {
-           question: newEntry.question,
-           answer: newEntry.answer,
-           timestamp: new Date()
-       };
-
-       consumerProfile.responses.push(newResponse);
-
-       consumerProfile.save(function(err) {
-           if (err) {
-               console.log('error saving consumer profile...');
-           } else {
-               console.log(
-                   `saved new response to consumer profile:
+    return ConsumerProfile
+        .findOne({ phone: newEntry.phone })
+        .exec()
+        .then(foundProfile => {
+            let consumerProfile = foundProfile || new ConsumerProfile({ phone: newEntry.phone });
+            consumerProfile.responses.push(newResponse);
+            return consumerProfile.save();
+        })
+        .then(saveSuccessResponse => {
+            console.log(
+                `saved new response to consumer profile:
                     Q. ${newResponse.question}
                     A. ${newResponse.answer}`
-               );
-           }
-       })
-    });
+            );
+        })
+        .catch(err => {
+            console.error('error saving consumer profile...', err);
+        });
 };
 
 ConsumerProfileSchema.statics.retrieveResponse = function(phone, q) {
-    // TODO: will this work? callback structure
-    ConsumerProfile.findOne({ phone: phone, question: q }, (err, doc) => {
-        return doc;
-    });
+    return ConsumerProfile
+        .findOne({ phone: phone, responses: { question: q} })
+        .exec();
 };
 
 ConsumerProfileSchema.statics.saveProduct = function(productModel) {
