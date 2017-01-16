@@ -1,6 +1,5 @@
 const config = require('../config');
-
-let twilioRestClient = require('twilio')(config.TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+let twilioRestClient = require('twilio')(config.TWILIO_ACCOUNT_SID, config.TWILIO_AUTH_TOKEN);
 
 function sendProduct(customerPhone, productUrl) {
     return new Promise(function (resolve, reject) {
