@@ -5,7 +5,7 @@ function sendProduct(customerPhone, productUrl) {
     return new Promise(function (resolve, reject) {
         twilioRestClient.messages.create({
             to: customerPhone,
-            from: TWILIO_FROM_PHONE,
+            from: config.TWILIO_FROM_PHONE,
             body: `Thanks for ordering with us! View your new product here: ${productUrl}`
         }, (error, message) => {
             if (error) {
