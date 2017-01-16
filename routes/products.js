@@ -8,7 +8,17 @@ const sayings = {
     ASK_ABOUT_COLOR: `Thank you for calling Products. You have been selected for a beta test
         while our platform is under development. In order to generate an ideal product
         for you, we will need to know your favorite color. Please listen to the following
-        list of color options, then press the number of your favorite color and press pound.`
+        list of color options, then press the number of your favorite color and press pound. `,
+    COLOR_OPTIONS: `0. Red.
+        1. White.
+        2. Blue.
+        3. Black.
+        4. Orange.
+        5. Green.
+        6. Yellow.
+        7. Pink.
+        8. Brown.
+        9. Mauve.`
 };
 
 const colors = {
@@ -32,7 +42,7 @@ products.post('/', twilio.webhook({validate: false}), (req, res) => {
         method: 'POST',
         timeout: 10,
         numDigits: 1
-    }, (node) => node.say(sayings.ASK_ABOUT_COLOR));
+    }, (node) => node.say(sayings.ASK_ABOUT_COLOR + sayings.COLOR_OPTIONS));
 
     res.send(twiml);
 });
@@ -51,7 +61,7 @@ products.post('/favorite-color', twilio.webhook({ validate: false }), (req, res,
     twiml.say(`${favoriteColor.name}? Perfect, thank you so much. You should receive your order soon.
         Have a nice day!`);
 
-    sms.sendProduct(req.body.Caller, 'http://lorempixel.com/400/200/food/');
+    sms.sendProduct(req.body.Caller, 'http://391eb9ec.ngrok.io');
 
     res.send(twiml);
 });
