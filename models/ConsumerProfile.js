@@ -59,21 +59,17 @@ ConsumerProfileSchema.statics.retrieveResponse = function(phone, q) {
 };
 
 ConsumerProfileSchema.statics.saveProduct = function(productModel) {
-    ConsumerProfile.findOne({ phone: productModel.phone }, (err, profile) => {
-
-        if (err) {
-            console.log(err);
-        }
-        // TODO: eventually check for duplicate product before adding
-
-        profile.products.push({
-            shape: productModel.shape,
-            color: productModel.color,
-            timestamp: productModel.timestamp
+    return ConsumerProfile
+        .findOne({ phone: productModel.phone })
+        .exec()
+        .then(profile => {
+            profile.products.push({
+                shape: productModel.shape,
+                color: productModel.color,
+                timestamp: productModel.timestamp
+            });
+            return profile.save();
         });
-        profile.save();
-
-    });
 };
 
 let ConsumerProfile = mongoose.model('ConsumerProfile', ConsumerProfileSchema);

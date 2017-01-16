@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const config = require('./config');
 const routes = require('./routes/index');
 
+mongoose.Promise = global.Promise;
 mongoose.connect(config.mongoUrl);
 
 let app = express();
