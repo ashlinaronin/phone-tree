@@ -8,7 +8,7 @@ productDetails.get('/:phoneNumber', function(req, res, next) {
         .limit(100)
         .exec(function(err, profile) {
             if (err) {
-                res.status(500).send(err);
+                res.status(500).send(err.message);
             } else {
                 res.send(profile.products);
             }
