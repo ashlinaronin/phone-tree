@@ -23,6 +23,4 @@ faraday.post('/', twilio.webhook({ validate: false }), (req, res) => {
     res.send(twiml);
 });
 
-faraday.post('/')
-
 module.exports = faraday;
