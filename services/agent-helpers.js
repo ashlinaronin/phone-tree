@@ -1,14 +1,17 @@
 const ConsumerProfile = require('../models/ConsumerProfile');
 const extensions = require('./extensions');
 const relatives = ['aunt', 'uncle', 'cousin', 'brother', 'sister', 'daughter', 'son'];
-const agents = ['cointreau', 'jenavieve', 'ricardo', 'faraday'];
+const agents = ['cointreau', 'jenavieve', 'ricardo', 'ada', 'judy', 'siggy', 'brica'];
 const baseUrl = require('../config').baseUrl;
 
 const voices = {
     'cointreau': { voice: 'man', language: 'en-GB' },
     'jenavieve': { voice: 'woman', language: 'en-AU' },
-    'ricardo': { voice: 'man', language: 'en-US' },
-    'faraday': { voice: 'alice', language: 'en-US' }
+    'ricardo': { voice: 'man', language: 'en' },
+    'ada': { voice: 'alice', language: 'en-US' },
+    'judy': { voice: 'woman', language: 'en-US' },
+    'siggy': { voice: 'alice', language: 'en-IN' },
+    'brica': { voice: 'alice', language: 'en-GB'}
 };
 
 function ask(twiml, agent, question, questionText) {
