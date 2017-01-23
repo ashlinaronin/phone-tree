@@ -1,2 +1,5 @@
 node_modules
 .DS_Store
+
+# images saved from image queries by users
+public/img/products

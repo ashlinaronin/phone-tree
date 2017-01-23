@@ -1,5 +1,6 @@
 const ConsumerProfile = require('../models/ConsumerProfile');
 const sms = require('../services/sms');
+const productHelpers = require('../services/product-helpers');
 
 let testRoutes = require('express').Router();
 
@@ -10,14 +11,16 @@ testRoutes.get('/sms', function(req, res, next) {
 });
 
 testRoutes.get('/save-product', function(req, res, next) {
-    const testProduct = {
+    let testProduct = {
         phone: '+15093414961',
         timestamp: new Date(),
         color: '#0000ff',
-        shape: 'cactus'
+        customRegion: 'base',
+        imageSearchTerm: 'poop',
+        shape: 'massager'
     };
 
-    ConsumerProfile.saveProduct(testProduct)
+    productHelpers.saveProduct(testProduct)
         .then(msg => res.send({ success: true, message: msg }))
         .catch(err => res.status(500).send({ success: false, message: err.message }));
 });

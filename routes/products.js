@@ -2,6 +2,7 @@ let products = require('express').Router();
 const twilio = require('twilio');
 const ConsumerProfile = require('../models/ConsumerProfile');
 const agent = require('../services/agent-helpers');
+const productHelpers = require('../services/product-helpers');
 const sms = require('../services/sms');
 
 const sayings = {
@@ -51,7 +52,7 @@ products.post('/favorite-color', twilio.webhook({ validate: false }), (req, res,
     let twiml = new twilio.TwimlResponse();
     let favoriteColor = colors[req.body.Digits];
 
-    ConsumerProfile.saveProduct({
+    productHelpers.saveProduct({
         timestamp: new Date(),
         phone: req.body.Caller,
         color: favoriteColor.hex,

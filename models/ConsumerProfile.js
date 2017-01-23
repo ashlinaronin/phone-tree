@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 let ProductSchema = new mongoose.Schema({
     shape: String,
+    customRegion: String,
+    imageUrl: String,
     color: String,
     timestamp: Date
 });
@@ -56,11 +58,7 @@ ConsumerProfileSchema.statics.saveProduct = function(productModel) {
         .findOne({ phone: productModel.phone })
         .exec()
         .then(profile => {
-            profile.products.push({
-                shape: productModel.shape,
-                color: productModel.color,
-                timestamp: productModel.timestamp
-            });
+            profile.products.push(productModel);
             return profile.save();
         });
 };

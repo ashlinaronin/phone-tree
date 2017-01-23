@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon --use_strict index.js",
+    "start": "mongod && nodemon --use_strict index.js",
     "test": "mocha --use_strict"
   },
   "dependencies": {
@@ -13,6 +13,7 @@
     "express": "~4.13.1",
     "mongoose": "^4.7.5",
     "morgan": "~1.6.1",
+    "promisify-node": "^0.4.0",
     "pug": "^2.0.0-beta6",
     "request": "^2.79.0",
     "request-promise-native": "^1.0.3",
