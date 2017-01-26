@@ -1,4 +1,4 @@
-var rp = require('request-promise-native');
+const rp = require('request-promise-native');
 const geocodeEndpoint = 'http://maps.googleapis.com/maps/api/geocode/json';
 
 function getLocality(zipcode) {
