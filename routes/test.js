@@ -14,13 +14,29 @@ testRoutes.get('/save-product', function(req, res, next) {
     let testProduct = {
         phone: '+15093414961',
         timestamp: new Date(),
-        color: '#0000ff',
-        customRegion: 'base',
+        color: '#ffffff',
+        customRegion: 'Material__3',
         imageSearchTerm: 'poop',
-        shape: 'massager'
+        shape: 'basketball'
     };
 
     productHelpers.saveProduct(testProduct)
+        .then(msg => res.send({ success: true, message: msg }))
+        .catch(err => res.status(500).send({ success: false, message: err.message }));
+});
+
+testRoutes.get('/save-product/no-image-search', function(req, res, next) {
+    let testProduct = {
+        phone: '+15093414961',
+        timestamp: new Date(),
+        color: '#ffffff',
+        customRegion: 'Material__3',
+        imageSearchTerm: 'poop',
+        shape: 'basketball',
+        imageUrl: 'img/products/Donate-Poop-for-Money.jpg'
+    };
+
+    productHelpers.saveProductWithoutImageQuery(testProduct)
         .then(msg => res.send({ success: true, message: msg }))
         .catch(err => res.status(500).send({ success: false, message: err.message }));
 });

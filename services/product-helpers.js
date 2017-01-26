@@ -12,6 +12,11 @@ function saveProduct(productModel) {
         });
 }
 
+function saveProductWithoutImageQuery(productModel) {
+    return ConsumerProfile.saveProduct(productModel);
+}
+
 module.exports = {
-    saveProduct
+    saveProduct,
+    saveProductWithoutImageQuery
 };
