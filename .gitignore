@@ -1,4 +1,5 @@
 node_modules
+npm-debug.log
 .DS_Store
 
 # images saved from image queries by users
