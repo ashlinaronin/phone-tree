@@ -13,7 +13,7 @@ function getDigitsFromString(string) {
     let extension = '';
     string = string.toLowerCase();
 
-    for (var i = 0; i < string.length; i++) {
+    for (let i = 0; i < string.length; i++) {
         let char = string[i];
         let charDigit = DIGIT_MAP.hasOwnProperty(char) ? DIGIT_MAP[char] : 0;
 
