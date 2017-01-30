@@ -3,15 +3,15 @@ const twilio = require('twilio');
 const horoscope = require('../../services/horoscope');
 const geography = require('../../services/geography');
 const agent = require('../../services/agent-helpers');
+const productHelpers = require('../../services/product-helpers');
 const extensions = require('../../services/extensions');
-const baseUrl = require('../../config').baseUrl;
 let cointreau = express.Router();
 
 const COINTREAU = 'cointreau';
 const COINTREAU_VOICE = agent.getVoice(COINTREAU);
 
 const sayings = {
-    ASK_FOR_BIRTHDAY: "Hello! To give you the best consumer experience', I'll need " +
+    ASK_FOR_BIRTHDAY: "Hello! My name is Cointreau. To give you the best consumer experience', I'll need " +
         "some more information about you. Would you mind entering your birthday " +
         "as a four digit number? For example, my birthday is May 8th, so I would " +
         "enter zero-five-zero-eight. Go ahead and enter your birthday and then " +
@@ -20,7 +20,7 @@ const sayings = {
         "please enter your zipcode followed by the pound key? Thanks!",
     IM_LOST: "I have run into an error and I'm really not sure how to proceed. Goodbye?",
     ASK_FOR_AGE: "I'm starting to get a picture of what you are like. " +
-        "I Have just one more question for you though. Approximately how old are you? " +
+        "I Have just a few more questions for you though. Approximately how old are you? " +
         "I won't tell anyone. Please enter your age, then press pound.",
     ASK_FOR_MONTHLY_SPENDING: "How much do you spend on personal goods in the course of " +
         "an average month? This will help me recommend an ideal product for you. Please enter " +
@@ -120,9 +120,32 @@ cointreau.post('/monthly-spending', twilio.webhook({ validate: false }), (req,re
        twiml.say(`You treat yourself well. I respect that.`, COINTREAU_VOICE)
    }
 
-   agent.transferToProducts(twiml, COINTREAU, sayings.THANK_YOU);
-   res.send(twiml);
+   designProduct(req.body.Caller)
+       .then(() => {
+           agent.transferToProducts(twiml, COINTREAU, sayings.THANK_YOU);
+           res.send(twiml);
+       });
 });
+
+function designProduct(phone) {
+    return agent.retrieveResponse(phone, 'sign')
+        .then(sign => {
+            const newProduct = {
+                phone: phone,
+                shape: chooseShape(),
+                imageSearchTerm: sign,
+                agent: COINTREAU
+            };
+
+            console.log('cointreau new product', newProduct);
+
+            return productHelpers.saveProduct(newProduct);
+        });
+}
+
+function chooseShape() {
+    return Math.random() < 0.5 ? 'freshenerv4' : 't-shirt_v2';
+}
 
 function askForBirthday(twiml) {
     return agent.ask(twiml, COINTREAU, 'birthday', sayings.ASK_FOR_BIRTHDAY)

@@ -5,66 +5,24 @@ const agent = require('../services/agent-helpers');
 const productHelpers = require('../services/product-helpers');
 const sms = require('../services/sms');
 
-const sayings = {
-    ASK_ABOUT_COLOR: `Thank you for calling Products. You have been selected for a beta test
-        while our platform is under development. In order to generate an ideal product
-        for you, we will need to know your favorite color. Please listen to the following
-        list of color options, then press the number of your favorite color and press pound. `,
-    COLOR_OPTIONS: `0. Red.
-        1. White.
-        2. Blue.
-        3. Black.
-        4. Orange.
-        5. Green.
-        6. Yellow.
-        7. Pink.
-        8. Brown.
-        9. Mauve.`
-};
-
-const colors = {
-    0: { name: 'red', hex: '#ff0000' },
-    1: { name: 'white', hex: '#ffffff' },
-    2: { name: 'blue', hex: '#0000ff' },
-    3: { name: 'black', hex: '#000000' },
-    4: { name: 'orange', hex: '#ffa500' },
-    5: { name: 'green', hex: '#00ff00' },
-    6: { name: 'yellow', hex: '#ffff00' },
-    7: { name: 'pink', hex: '#ff0080' },
-    8: { name: 'brown', hex: '#654321' },
-    9: { name: 'mauve', hex: '#b784a7' }
-};
-
 products.post('/', twilio.webhook({validate: false}), (req, res) => {
     let twiml = new twilio.TwimlResponse();
 
-    twiml.gather({
-        action: '/products/favorite-color',
-        method: 'POST',
-        timeout: 10,
-        numDigits: 1
-    }, (node) => node.say(sayings.ASK_ABOUT_COLOR + sayings.COLOR_OPTIONS));
+    productHelpers.getProduct(req.body.Caller)
+        .then(product => {
+            twiml.say(`Thank you for calling Products. We hope your experience so far has been to a high standard.
+            I see that you spoke with ${product.agent} today! ${product.agent} noted that you were very
+            interested in ${product.imageSearchTerm}. Based on their personality assessment, I'm going to
+            recommend the ${product.shape} for you. I hope you like it! You should receive a link to your product
+            on your phone in a few minutes. Have a great day and please call us again!`);
 
-    res.send(twiml);
-});
-
-products.post('/favorite-color', twilio.webhook({ validate: false }), (req, res, next) => {
-    let twiml = new twilio.TwimlResponse();
-    let favoriteColor = colors[req.body.Digits];
-
-    productHelpers.saveProduct({
-        timestamp: new Date(),
-        phone: req.body.Caller,
-        color: favoriteColor.hex,
-        shape: 'cactus'
-    });
-
-    twiml.say(`${favoriteColor.name}? Perfect, thank you so much. You should receive your order soon.
-        Have a nice day!`);
-
-    sms.sendProduct(req.body.Caller, 'http://391eb9ec.ngrok.io');
-
-    res.send(twiml);
+            return sms.sendProduct(req.body.Caller, product._id.toString());
+        })
+        .catch(err => {
+            console.log('no product...', err);
+            twiml.say('sorry');
+            res.send(twiml);
+        });
 });
 
 module.exports = products;

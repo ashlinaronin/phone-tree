@@ -16,7 +16,12 @@ function saveProductWithoutImageQuery(productModel) {
     return ConsumerProfile.saveProduct(productModel);
 }
 
+function getProduct(phone) {
+    return ConsumerProfile.getLatestProduct(phone);
+}
+
 module.exports = {
+    getProduct,
     saveProduct,
     saveProductWithoutImageQuery
 };

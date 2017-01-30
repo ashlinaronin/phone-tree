@@ -2,10 +2,11 @@ const mongoose = require('mongoose');
 
 let ProductSchema = new mongoose.Schema({
     shape: String,
-    customRegion: String,
     imageUrl: String,
+    imageSearchTerm: String,
     color: String,
-    timestamp: Date
+    timestamp: Date,
+    agent: String
 });
 
 let ConsumerProfileSchema = new mongoose.Schema({
@@ -49,17 +50,45 @@ ConsumerProfileSchema.statics.saveResponse = function(newEntry) {
 
 ConsumerProfileSchema.statics.retrieveResponse = function(phone, q) {
     return ConsumerProfile
-        .findOne({ phone: phone, responses: { question: q} })
-        .exec();
+        .findOne({ phone: phone })
+        .exec()
+        .then(profile => {
+            const response = profile.responses.find(r => r.question === q);
+            return Promise.resolve(response.answer);
+        })
+        .catch(err => {
+            console.log('error retrieving response', err);
+        });
 };
+
+
 
 ConsumerProfileSchema.statics.saveProduct = function(productModel) {
     return ConsumerProfile
         .findOne({ phone: productModel.phone })
         .exec()
         .then(profile => {
+            productModel.timestamp = new Date();
             profile.products.push(productModel);
             return profile.save();
+        })
+        .catch(err => {
+            console.log('error saving product', err);
+        });
+};
+
+ConsumerProfileSchema.statics.getLatestProduct = function(phone) {
+    return ConsumerProfile
+        .findOne({ phone: phone })
+        .exec()
+        .then(profile => {
+            // for now, just pick a product
+            const latestProduct = profile.products[profile.products.length-1];
+            // const latestProduct = profile.products.sort((p, q) => p.timestamp - q.timestamp);
+            return latestProduct;
+        })
+        .catch(err => {
+            console.log('error getting latest product', err);
         });
 };
 

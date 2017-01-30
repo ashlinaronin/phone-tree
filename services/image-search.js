@@ -11,7 +11,7 @@ const productImageBasePath = 'img/products/';
 const apiBaseUrl = 'https://www.googleapis.com/customsearch/v1?';
 
 let queryParams = new Map([
-    ['key', 'AAIzaSyD5H8Y3lKehTn2enbJU1qL5S8X7Et4AX4M'],
+    ['key', 'AIzaSyD5H8Y3lKehTn2enbJU1qL5S8X7Et4AX4M'],
     ['cx', '014144397479220879650:sd7rzvq2hog'],
     ['num', 1],
     ['fields', 'items(link,snippet)'],
@@ -62,8 +62,7 @@ function downloadAndSaveImage(imageUrl, originalQuery) {
             });
 
             return successfulImageQuery
-                .save()
-                .exec();
+                .save();
         })
         .then(dbSaveResponse => pathForFrontend);
 }
@@ -85,7 +84,7 @@ function saveImageForQuery(query) {
             return fetchImageResults(query)
                 .then(json => json.items[0].link)
                 .then(imageUrl => {
-                    return downloadAndSaveImage(imageUrl, originalQuery);
+                    return downloadAndSaveImage(imageUrl, query);
                 });
         });
 }
