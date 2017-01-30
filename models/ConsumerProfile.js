@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const shortId = require('short-id');
 
 let ProductSchema = new mongoose.Schema({
     shape: String,
@@ -6,7 +7,8 @@ let ProductSchema = new mongoose.Schema({
     imageSearchTerm: String,
     color: String,
     timestamp: Date,
-    agent: String
+    readableId: String,
+    agent: String,
 });
 
 let ConsumerProfileSchema = new mongoose.Schema({
@@ -69,6 +71,7 @@ ConsumerProfileSchema.statics.saveProduct = function(productModel) {
         .exec()
         .then(profile => {
             productModel.timestamp = new Date();
+            productModel.readableId = shortId.generate();
             profile.products.push(productModel);
             return profile.save();
         })

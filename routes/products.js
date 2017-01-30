@@ -16,7 +16,9 @@ products.post('/', twilio.webhook({validate: false}), (req, res) => {
             recommend the ${product.shape} for you. I hope you like it! You should receive a link to your product
             on your phone in a few minutes. Have a great day and please call us again!`);
 
-            return sms.sendProduct(req.body.Caller, product._id.toString());
+            sms.sendProduct(req.body.Caller, product.readableId)
+                .then(() => res.send(twiml))
+                .catch(err => console.log('error sending sms', err));
         })
         .catch(err => {
             console.log('no product...', err);
