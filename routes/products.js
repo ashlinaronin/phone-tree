@@ -10,7 +10,7 @@ products.post('/', twilio.webhook({validate: false}), (req, res) => {
 
     productHelpers.getProduct(req.body.Caller)
         .then(product => {
-            twiml.say(`Thank you for calling Products. We hope your experience so far has been to a high standard.
+            twiml.say(`Thank you for calling Nectar Products. We hope your experience so far has been to a high standard.
             I see that you spoke with ${product.agent} today! ${product.agent} noted that you were very
             interested in ${product.imageSearchTerm}. Based on their personality assessment, I'm going to
             recommend the ${product.shape} for you. I hope you like it! You should receive a link to your product
