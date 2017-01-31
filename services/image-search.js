@@ -1,6 +1,6 @@
 const rp = require('request-promise-native');
 const promisify = require('promisify-node');
-const fs = promisify('fs');
+const fs = promisify('fs-extra');
 const url = require('url');
 const path = require('path');
 
@@ -53,7 +53,7 @@ function downloadAndSaveImage(imageUrl, originalQuery) {
     const pathForFrontend = path.join(productImageBasePath, filename);
 
     return rp({ uri: imageUrl, encoding: null })
-        .then(body => fs.writeFile(savedFilePath, body))
+        .then(body => fs.ensureFile(savedFilePath, body))
         .then(fsResponse => {
             let successfulImageQuery = new ImageQuery({
                 query: originalQuery,
