@@ -16,20 +16,24 @@ const voices = {
 
 function ask(twiml, agent, question, questionText) {
     twiml.gather({
-        action: `${baseUrl}/agents/${agent}/` + question,
+        action: `${baseUrl}/agents/${agent}/${question}`,
         method: 'POST',
-        timeout: 15,
+        timeout: 7,
         finishOnKey: '#'
     }, (node) => node.say(questionText, getVoice(agent)));
 
     return twiml;
 }
 
+function redo(twiml, agent, question) {
+    twiml.redirect(`${baseUrl}/agents/${agent}/${question}`);
+}
+
 function askOneDigit(twiml, agent, question, questionText) {
     twiml.gather({
         action: `${baseUrl}/agents/${agent}/` + question,
         method: 'POST',
-        timeout: 10,
+        timeout: 5,
         numDigits: 1
     }, (node) => node.say(questionText, getVoice(agent)));
 
@@ -77,6 +81,7 @@ function transferToProducts(twiml, agent, thankYouMessage) {
 module.exports = {
     ask,
     askOneDigit,
+    redo,
     getVoice,
     randomRelative,
     randomAgent,
