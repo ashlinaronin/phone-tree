@@ -1,6 +1,5 @@
 const rp = require('request-promise-native');
-const promisify = require('promisify-node');
-const fs = promisify('fs-extra');
+const fsp = require('fs-promise');
 const url = require('url');
 const path = require('path');
 
@@ -49,11 +48,12 @@ function fetchImageResults(query) {
 function downloadAndSaveImage(imageUrl, originalQuery) {
     const parsedUrl = url.parse(imageUrl);
     const filename = path.basename(parsedUrl.pathname);
-    const savedFilePath = path.join(publicBaseDir, productImageBasePath, filename);
+    const savedFileDir = path.join(publicBaseDir, productImageBasePath);
+    const savedFilePath = path.join(savedFileDir, filename);
     const pathForFrontend = path.join(productImageBasePath, filename);
 
     return rp({ uri: imageUrl, encoding: null })
-        .then(body => fs.ensureFile(savedFilePath, body))
+        .then(body => saveImage(savedFileDir, savedFilePath, body))
         .then(fsResponse => {
             let successfulImageQuery = new ImageQuery({
                 query: originalQuery,
@@ -61,10 +61,14 @@ function downloadAndSaveImage(imageUrl, originalQuery) {
                 savedImageUrl: pathForFrontend
             });
 
-            return successfulImageQuery
-                .save();
+            return successfulImageQuery.save();
         })
         .then(dbSaveResponse => pathForFrontend);
+}
+
+function saveImage(directory, fullPath, imageData) {
+    return fsp.ensureDir(directory)
+        .then(() => fsp.writeFile(fullPath, imageData));
 }
 
 function checkForSavedImage(query) {
@@ -83,9 +87,7 @@ function saveImageForQuery(query) {
 
             return fetchImageResults(query)
                 .then(json => json.items[0].link)
-                .then(imageUrl => {
-                    return downloadAndSaveImage(imageUrl, query);
-                });
+                .then(imageUrl =>  downloadAndSaveImage(imageUrl, query));
         });
 }
 
