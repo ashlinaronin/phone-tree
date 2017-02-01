@@ -15,7 +15,6 @@ testRoutes.get('/save-product', function(req, res, next) {
         phone: '+15093414961',
         timestamp: new Date(),
         color: '#ffffff',
-        customRegion: 'Material__3',
         imageSearchTerm: 'poop',
         shape: 'basketball'
     };
