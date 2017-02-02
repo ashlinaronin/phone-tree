@@ -25,7 +25,7 @@ router.post('/', twilio.webhook({ validate: false }), (req, res) => {
 
     twiml.play({ digits: agentExtension });
 
-    twiml.redirect(`${baseUrl}/agents/${agent.randomAgent()}`);
+    twiml.redirect(`${baseUrl}/agents/${selectedAgent}`);
 
     res.send(twiml);
 });

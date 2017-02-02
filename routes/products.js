@@ -4,6 +4,7 @@ const ConsumerProfile = require('../models/ConsumerProfile');
 const agent = require('../services/agent-helpers');
 const productHelpers = require('../services/product-helpers');
 const sms = require('../services/sms');
+const baseUrl = require('../config').baseUrl;
 
 products.post('/', twilio.webhook({validate: false}), (req, res) => {
     let twiml = new twilio.TwimlResponse();
@@ -22,7 +23,18 @@ products.post('/', twilio.webhook({validate: false}), (req, res) => {
         })
         .catch(err => {
             console.log('no product...', err);
-            twiml.say('sorry');
+
+            let selectedAgent = agent.randomAgent();
+            let agentExtension = extensions.getDepartmentExtension(selectedAgent);
+
+            twiml.say(`I'm sorry, it looks like your agent didn't take very good notes. I'm having trouble pulling
+                up your information from your system. I'm transferring you to another agent to give it another shot.
+                Please excuse the inconvenience and I hope you have a wonderful experience with ${selectedAgent}`);
+
+            twiml.play({ digits: agentExtension });
+
+            twiml.redirect(`${baseUrl}/agents/${selectedAgent}`);
+
             res.send(twiml);
         });
 });
