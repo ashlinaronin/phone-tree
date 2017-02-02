@@ -185,7 +185,7 @@ function designProduct(phone) {
 }
 
 function chooseShape() {
-    return Math.random() < 0.5 ? 'freshenerv4' : 't-shirt_v2';
+    return Math.random() < 0.5 ? 'snuggy' : 'mug';
 }
 
 function askForBirthday(twiml) {
