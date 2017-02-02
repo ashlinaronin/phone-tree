@@ -66,12 +66,6 @@ cointreau.post('/birthday', twilio.webhook({ validate: false }), (req, res) => {
     return res.send(twiml);
 });
 
-function reAskBirthday(twiml) {
-    twiml.say(`I'm sorry, I don't understand that birthday.`, COINTREAU_VOICE);
-    agent.redo(twiml, COINTREAU, '');
-}
-
-
 cointreau.post('/zipcode', twilio.webhook({ validate: false }), (req, res) => {
     let twiml = new twilio.TwimlResponse();
 
@@ -123,13 +117,6 @@ cointreau.post('/zipcode', twilio.webhook({ validate: false }), (req, res) => {
         });
 });
 
-function reAskZipcode(twiml) {
-    twiml.say(`I don't recognize that zipcode.`, COINTREAU_VOICE);
-    agent.ask(twiml, COINTREAU, 'zipcode', `Please try entering your zipcode
-                again, then press pound.`);
-    agent.redo(twiml, COINTREAU, 'birthday');
-}
-
 cointreau.post('/age', twilio.webhook({ validate: false }), (req, res) => {
     let twiml = new twilio.TwimlResponse();
 
@@ -165,7 +152,7 @@ cointreau.post('/monthly-spending', twilio.webhook({ validate: false }), (req,re
        return res.send(twiml);
    }
 
-   let monthlySpending = req.body.Digits;
+   let monthlySpending = parseInt(req.body.Digits);
    agent.saveResponse(req.body.Caller, 'monthly-spending', monthlySpending);
 
    if (monthlySpending < 2000) {
@@ -180,6 +167,7 @@ cointreau.post('/monthly-spending', twilio.webhook({ validate: false }), (req,re
            return res.send(twiml);
        });
 });
+
 
 function designProduct(phone) {
     return agent.retrieveResponse(phone, 'sign')
@@ -205,8 +193,20 @@ function askForBirthday(twiml) {
     return agent.ask(twiml, COINTREAU, 'birthday', sayings.ASK_FOR_BIRTHDAY)
 }
 
+function reAskBirthday(twiml) {
+    twiml.say(`I'm sorry, I don't understand that birthday.`, COINTREAU_VOICE);
+    agent.redo(twiml, COINTREAU, '');
+}
+
 function askForZipcode(twiml) {
     return agent.ask(twiml, COINTREAU, 'zipcode', sayings.ASK_FOR_ZIPCODE)
+}
+
+function reAskZipcode(twiml) {
+    twiml.say(`I don't recognize that zipcode.`, COINTREAU_VOICE);
+    agent.ask(twiml, COINTREAU, 'zipcode', `Please try entering your zipcode
+                again, then press pound.`);
+    agent.redo(twiml, COINTREAU, 'birthday');
 }
 
 function askForAge(twiml) {

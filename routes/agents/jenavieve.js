@@ -9,9 +9,9 @@ const JENAVIEVE = 'jenavieve';
 const JENAVIEVE_VOICE = agent.getVoice(JENAVIEVE);
 
 const sayings = {
-    ASK_FOR_RELATIONSHIP_STATUS: `Hey! I'm so glad you decided to give Nectar a shot.
-        My name is Jenna-veeve! You can call me Jenny if you like.
-        I love getting to know our new customers. I have just a few questions for you
+    ASK_FOR_RELATIONSHIP_STATUS: `Hello! My name is Jenna-veeve! You can call me Jenny if you like.
+        I'm so glad you decided to give Nectar a shot.
+        I love getting to know our new customers! I have just a few questions for you
         to get an idea of what you're looking for. First of all, what's your current
         relationship status on a scale of 1 to 5? Press 1 for totally single, 5 for
         taken, or any other number in between.`,
@@ -26,9 +26,12 @@ const sayings = {
         In his 1973 book Colours of Love, psychologist John Alan Lee identified three primary and
         three secondary love styles, relating them to the familiar concept of primary and secondary colors.
         Which primary style of love do you most readily identify with? Listen to the following three
-        options and press the corresponding number.
-        1. Air-ohs. Passionate, emotional, sexual, aesthetic, intense love.
-        2. Lew-duhss. Playful, teasing, indulgent, fun-seeking, casual love.
+        options and press the corresponding number.`,
+    RE_ASK_ABOUT_LOVE_STYLE: `Which primary style of love fits you? Listen to the following three
+        options and press the corresponding number. `,
+    LOVE_STYLE_LIST:
+        `1. Air-ohs. Passionate, emotional, sexual, aesthetic, intense love.
+        2. Lew-duss. Playful, teasing, indulgent, fun-seeking, casual love.
         3. Store-gay. Familial, friendly, loy-uhl, dutiful love. Please press 1, 2, or 3 to indicate
         your primary love style.`,
     THANK_YOU: `Alright, thanks for bearing with me! That's all the questions I have for now. I've
@@ -56,26 +59,30 @@ jenavieve.post('/relationship-status', twilio.webhook({ validate: false }), (req
    let twiml = new twilio.TwimlResponse();
 
    if (!req.body.Digits) {
-
        // split based on saved answer to relationship status so users stay on same track
+       return agent.retrieveResponse(req.body.Digits, 'relationship-status')
+           .then(relationshipStatus => {
+              if (relationshipStatus >= 4) {
+                  askForLivingSituation(twiml);
+              } else {
+                  askForDatingFrequency(twiml);
+              }
 
-       askForDatingFrequency(twiml);
+              agent.redo(twiml, JENAVIEVE, 'relationship-status');
 
-
-
-       agent.redo(twiml, JENAVIEVE, 'relationship-status');
-       return res.send(twiml);
+              return res.send(twiml);
+           });
    }
 
 
    let status = parseInt(req.body.Digits);
-   
-   agent.saveResponse(req.body.Caller, 'relationship-status', status);
 
    if (status < 1 || status > 5 || isNaN(status)) {
        reAskRelationshipStatus(twiml);
        return res.send(twiml);
    }
+
+    agent.saveResponse(req.body.Caller, 'relationship-status', status);
 
    if (status === 1) {
        twiml.say(`Oooh, you're single! Way to be.`, JENAVIEVE_VOICE);
@@ -93,13 +100,6 @@ jenavieve.post('/relationship-status', twilio.webhook({ validate: false }), (req
 
    return res.send(twiml);
 });
-
-function reAskRelationshipStatus(twiml) {
-    twiml.say(`Hum. I'm not able to parse that response into a human relationship status.`, JENAVIEVE_VOICE);
-    agent.ask(twiml, JENAVIEVE, 'relationship-status', `Please enter a number between 1 and 5.`);
-    agent.redo(twiml, JENAVIEVE, '');
-}
-
 
 jenavieve.post('/dating-frequency', twilio.webhook({ validate: false }), (req, res) => {
    let twiml = new twilio.TwimlResponse();
@@ -168,12 +168,13 @@ jenavieve.post('/dating-optimism', twilio.webhook({ validate: false }), (req, re
 
    let optimism = parseInt(req.body.Digits);
 
-   agent.saveResponse(req.body.Caller, 'dating-optimism', optimism);
 
    if (optimism < 1 || optimism > 5 || isNaN(optimism)) {
        reAskDatingOptimism(twiml);
        return res.send(twiml);
    }
+
+   agent.saveResponse(req.body.Caller, 'dating-optimism', optimism);
 
    if (optimism < 3) {
        twiml.say(`I'm sorry that you feel that way. It can be tough out there.`, JENAVIEVE_VOICE);
@@ -188,21 +189,13 @@ jenavieve.post('/dating-optimism', twilio.webhook({ validate: false }), (req, re
    return res.send(twiml);
 });
 
-function reAskDatingOptimism(twiml) {
-    twiml.say(`Hum. Your response doesn't fit the simple concept of optimism I expect.`, JENAVIEVE_VOICE);
-    agent.ask(twiml, JENAVIEVE, 'dating-optimism', `Please enter a number between 1 and 5 to indicate
-        your level of optimism surrounding the dating scene.`);
-    agent.redo(twiml, JENAVIEVE, 'lives-with-partner');
-}
-
 jenavieve.post('/love-style', twilio.webhook({ validate: false }), (req, res) => {
    let twiml = new twilio.TwimlResponse();
 
    let loveStyle = getLoveStyle(parseInt(req.body.Digits));
 
    if (!req.body.Digits || !loveStyle) {
-       askAboutLoveStyle(twiml);
-       agent.redo(twiml, JENAVIEVE, 'love-style');
+       reAskLoveStyle(twiml);
        return res.send(twiml);
    }
 
@@ -211,27 +204,25 @@ jenavieve.post('/love-style', twilio.webhook({ validate: false }), (req, res) =>
 
    twiml.say(`Ah, you're ${ loveStyle.pronunciation } too! Good to know!`, JENAVIEVE_VOICE);
 
-   designProduct(req.body.Caller)
+   designProduct(req.body.Caller, loveStyle.name)
        .then(() => {
             agent.transferToProducts(twiml, JENAVIEVE, sayings.THANK_YOU);
             return res.send(twiml);
        });
 });
 
-function designProduct(phone) {
-    return agent.retrieveResponse(phone, 'love-style')
-        .then(loveStyle => {
-            const newProduct = {
-                phone: phone,
-                shape: chooseShape(),
-                imageSearchTerm: `${loveStyle} love`,
-                agent: JENAVIEVE
-            };
 
-            console.log('jenavieve new product', newProduct);
+function designProduct(phone, loveStyle) {
+    const newProduct = {
+        phone: phone,
+        shape: chooseShape(),
+        imageSearchTerm: `${loveStyle} love`,
+        agent: JENAVIEVE
+    };
 
-            return productHelpers.saveProduct(newProduct);
-        });
+    console.log('jenavieve new product', newProduct);
+
+    return productHelpers.saveProduct(newProduct);
 }
 
 function chooseShape() {
@@ -240,6 +231,12 @@ function chooseShape() {
 
 function askForRelationshipStatus(twiml) {
     return agent.askOneDigit(twiml, JENAVIEVE, 'relationship-status', sayings.ASK_FOR_RELATIONSHIP_STATUS);
+}
+
+function reAskRelationshipStatus(twiml) {
+    twiml.say(`Hum. I'm not able to parse that response into a human relationship status.`, JENAVIEVE_VOICE);
+    agent.askOneDigit(twiml, JENAVIEVE, 'relationship-status', `Please enter a number between 1 and 5.`);
+    agent.redo(twiml, JENAVIEVE, '');
 }
 
 function askForDatingFrequency(twiml) {
@@ -254,8 +251,20 @@ function askAboutDatingScene(twiml) {
     return agent.askOneDigit(twiml, JENAVIEVE, 'dating-optimism', sayings.ASK_ABOUT_DATING_OPTIMISM);
 }
 
+function reAskDatingOptimism(twiml) {
+    twiml.say(`Hum. Your response doesn't fit within the optimism range I expect.`, JENAVIEVE_VOICE);
+    agent.askOneDigit(twiml, JENAVIEVE, 'dating-optimism', `Please enter a number between 1 and 5 to indicate
+        your level of optimism surrounding the dating scene.`);
+    agent.redo(twiml, JENAVIEVE, 'lives-with-partner');
+}
+
 function askAboutLoveStyle(twiml) {
-    return agent.askOneDigit(twiml, JENAVIEVE, 'love-style', sayings.ASK_ABOUT_LOVE_STYLE);
+    return agent.askOneDigit(twiml, JENAVIEVE, 'love-style', sayings.ASK_ABOUT_LOVE_STYLE + sayings.LOVE_STYLE_LIST);
+}
+
+function reAskLoveStyle(twiml) {
+    agent.askOneDigit(twiml, JENAVIEVE, 'love-style', sayings.RE_ASK_ABOUT_LOVE_STYLE + sayings.LOVE_STYLE_LIST);
+    agent.redo(twiml, JENAVIEVE, 'love-style');
 }
 
 function getLoveStyle(digit) {
