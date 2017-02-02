@@ -31,6 +31,7 @@ const sayings = {
 
 cointreau.post('/', twilio.webhook({ validate: false }), (req, res) => {
     let twiml = new twilio.TwimlResponse();
+
     askForBirthday(twiml);
 
     agent.redo(twiml, COINTREAU, '');
