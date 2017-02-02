@@ -23,7 +23,7 @@ function sendMessage(customerPhone, productUrl) {
 }
 
 function constructProductUrl(productId) {
-    return `https://nectar.shop/product/?id=${productId}`;
+    return `${config.FRONTEND_PRODUCT_URL}/?id=${productId}`;
 }
 
 module.exports = {

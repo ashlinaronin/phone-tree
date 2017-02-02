@@ -11,5 +11,7 @@ cfg.TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 cfg.TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 cfg.TWILIO_FROM_PHONE = process.env.TWILIO_FROM_PHONE;
 
+cfg.FRONTEND_PRODUCT_URL = process.env.FRONTEND_PRODUCT_URL || 'https://nectar.shop/product';
+
 // Export configuration object
 module.exports = cfg;
