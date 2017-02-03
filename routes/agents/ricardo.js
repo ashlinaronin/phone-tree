@@ -22,7 +22,8 @@ const sayings = {
         make a guess. It doesn't have to be exact! Enter the number and press pound.`,
     ASK_ABOUT_DIETARY_RESTRICTIONS: `These days almost everybody has some kind of dietary restriction.
         Listen to the following list of dietary restrictions. Press the number of any that pertain to you.
-        You can press multiple numbers.
+        You can press multiple numbers if you have multiple restrictions, or you can press zero if you have
+        no restrictions.
         Press pound when you're done. Are you:`,
     LIST_OF_DIETARY_RESTRICTIONS: `1. Vegetarian.
             2. Veegan.
@@ -41,6 +42,7 @@ const sayings = {
 };
 
 const DIETARY_RESTRICTIONS = {
+    0: 'omnivore',
     1: 'vegetarian',
     2: 'vegan',
     3: 'gluten-free',
@@ -283,7 +285,7 @@ function chooseShape() {
 }
 
 function getImageSearchTermFromDietaryRestrictions(restrictions) {
-    if (!restrictions.length) return `omnivore`;
+    if (!restrictions || !restrictions.length) return `omnivore diet`;
 
     let firstRestriction = restrictions[0];
     return `${firstRestriction} diet`;
