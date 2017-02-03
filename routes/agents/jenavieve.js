@@ -21,7 +21,7 @@ const sayings = {
         with your partner? Press 1 for yes, any other key for no.`,
     ASK_ABOUT_DATING_OPTIMISM: `On a scale of one to five, do you feel generally optimistic about your
         experience on the dating scene? One being very pessimistic, five being very optimistic.
-        Enter your level of optimism on the number pad.`,
+        Please enter your level of optimism on the number pad.`,
     ASK_ABOUT_LOVE_STYLE: `As I'm sure you know, everyone has a different idea of what love is.
         In his 1973 book Colours of Love, psychologist John Alan Lee identified three primary and
         three secondary love styles, relating them to the familiar concept of primary and secondary colors.
@@ -30,9 +30,9 @@ const sayings = {
     RE_ASK_ABOUT_LOVE_STYLE: `Which primary style of love fits you? Listen to the following three
         options and press the corresponding number. `,
     LOVE_STYLE_LIST:
-        `1. Air-ohs. Passionate, emotional, sexual, aesthetic, intense love.
-        2. Lew-duss. Playful, teasing, indulgent, fun-seeking, casual love.
-        3. Store-gay. Familial, friendly, loy-uhl, dutiful love. Please press 1, 2, or 3 to indicate
+        `One. Air-ohs. Passionate, emotional, sexual, aesthetic, intense love.
+        Two. Lew-duss. Playful, teasing, indulgent, fun-seeking, casual love.
+        Three. Store-gay. Familial, friendly, loy-uhl, dutiful love. Please press 1, 2, or 3 to indicate
         your primary love style.`,
     THANK_YOU: `Alright, thanks for bearing with me! That's all the questions I have for now. I've
         saved your profile in our system and will transfer you over to Products to complete your order.
@@ -178,8 +178,10 @@ jenavieve.post('/dating-optimism', twilio.webhook({ validate: false }), (req, re
 
    if (optimism < 3) {
        twiml.say(`I'm sorry that you feel that way. It can be tough out there.`, JENAVIEVE_VOICE);
+       twiml.pause();
    } else {
        twiml.say(`I'm so happy that you have a good attitude. That really goes a long way.`, JENAVIEVE_VOICE);
+       twiml.pause();
    }
 
    askAboutLoveStyle(twiml);

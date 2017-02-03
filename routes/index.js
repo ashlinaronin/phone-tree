@@ -15,7 +15,7 @@ const test = require('./test');
 router.post('/', twilio.webhook({ validate: false }), (req, res) => {
     let twiml = new twilio.TwimlResponse();
 
-    twiml.say(`Thank you for calling today. Please hold while we transfer you
+    twiml.say(`Thank you for calling Nectar. Please hold while we transfer you
         to the next available representative.`);
 
     // TODO: warm welcome for repeat callers

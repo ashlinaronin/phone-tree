@@ -11,7 +11,7 @@ const COINTREAU = 'cointreau';
 const COINTREAU_VOICE = agent.getVoice(COINTREAU);
 
 const sayings = {
-    ASK_FOR_BIRTHDAY: `Hello! Thank you for calling Nectar today. My name is Cointreau and
+    ASK_FOR_BIRTHDAY: `Hello! Thank you for calling Nectar. My name is Cointreau and
         I'll be your agent today. To give you the best consumer experience', I'll need
         some more information about you. First of all, would you mind entering your birthday
         as a four digit number? For example, my birthday is May 8th, so I would enter
