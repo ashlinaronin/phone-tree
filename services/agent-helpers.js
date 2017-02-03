@@ -73,7 +73,7 @@ function saveResponse(phone, question, answer, agent) {
         agent
     };
 
-    ConsumerProfile.saveResponse(response);
+    return ConsumerProfile.saveResponse(response);
 }
 
 function retrieveResponse(phone, q) {

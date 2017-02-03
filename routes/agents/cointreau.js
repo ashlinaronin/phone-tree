@@ -155,17 +155,26 @@ cointreau.post('/monthly-spending', twilio.webhook({ validate: false }), (req,re
    }
 
    let monthlySpending = parseInt(req.body.Digits);
+
+   console.log('cointreau before save response spending');
+
    agent.saveResponse(req.body.Caller, 'monthly-spending', monthlySpending, COINTREAU);
+
+   console.log('countrea after save repsonse');
 
    if (monthlySpending < 2000) {
        twiml.say(`That's about the range I'd expect for someone your age.`, COINTREAU_VOICE);
    } else {
-       twiml.say(`You treat yourself well. I respect that.`, COINTREAU_VOICE)
+       twiml.say(`You treat yourself well. I respect that.`, COINTREAU_VOICE);
    }
+
+   console.log('i made it past the spending check');
 
    return designProduct(req.body.Caller)
        .then(() => {
+           console.log('before transfer to products');
            agent.transferToProducts(twiml, COINTREAU, sayings.THANK_YOU);
+           console.log('after transfer to products');
            return res.send(twiml);
        })
        .catch(err => {
