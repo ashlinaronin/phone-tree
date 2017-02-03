@@ -55,7 +55,7 @@ cointreau.post('/birthday', twilio.webhook({ validate: false }), (req, res) => {
         return res.send(twiml);
     }
 
-    agent.saveResponse(req.body.Caller, 'sign', sign);
+    agent.saveResponse(req.body.Caller, 'sign', sign, COINTREAU);
     twiml.say(`Ah! I am sensing that you're a ${sign}.`, COINTREAU_VOICE);
     twiml.pause();
 
@@ -86,7 +86,7 @@ cointreau.post('/zipcode', twilio.webhook({ validate: false }), (req, res) => {
                 return res.send(twiml);
             }
 
-            agent.saveResponse(req.body.Caller, 'locality', locality);
+            agent.saveResponse(req.body.Caller, 'locality', locality, COINTREAU);
 
             let relative = agent.randomRelative();
 
@@ -127,8 +127,8 @@ cointreau.post('/age', twilio.webhook({ validate: false }), (req, res) => {
     }
 
 
-    let age = req.body.Digits;
-    agent.saveResponse(req.body.Caller, 'age', age);
+    let age = parseInt(req.body.Digits);
+    agent.saveResponse(req.body.Caller, 'age', age, COINTREAU);
 
     if (age % 3 === 0) {
         twiml.say(`A multiple of three! You must be a very lucky person.`, COINTREAU_VOICE);
@@ -153,7 +153,7 @@ cointreau.post('/monthly-spending', twilio.webhook({ validate: false }), (req,re
    }
 
    let monthlySpending = parseInt(req.body.Digits);
-   agent.saveResponse(req.body.Caller, 'monthly-spending', monthlySpending);
+   agent.saveResponse(req.body.Caller, 'monthly-spending', monthlySpending, COINTREAU);
 
    if (monthlySpending < 2000) {
        twiml.say(`That's about the range I'd expect for someone your age.`, COINTREAU_VOICE);

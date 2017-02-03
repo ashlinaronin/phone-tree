@@ -82,7 +82,7 @@ jenavieve.post('/relationship-status', twilio.webhook({ validate: false }), (req
        return res.send(twiml);
    }
 
-    agent.saveResponse(req.body.Caller, 'relationship-status', status);
+    agent.saveResponse(req.body.Caller, 'relationship-status', status, JENAVIEVE);
 
    if (status === 1) {
        twiml.say(`Oooh, you're single! Way to be.`, JENAVIEVE_VOICE);
@@ -112,7 +112,7 @@ jenavieve.post('/dating-frequency', twilio.webhook({ validate: false }), (req, r
 
    let frequency = parseInt(req.body.Digits);
    
-   agent.saveResponse(req.body.Caller, 'dating-frequency', frequency);
+   agent.saveResponse(req.body.Caller, 'dating-frequency', frequency, JENAVIEVE);
 
    if (frequency === 0) {
        twiml.say(`I'm sorry to hear that. I'm sure things will look up for you--
@@ -141,7 +141,7 @@ jenavieve.post('/lives-with-partner', twilio.webhook({ validate: false }), (req,
 
    let livesWithPartner = parseInt(req.body.Digits) === 1;
 
-   agent.saveResponse(req.body.Caller, 'lives-with-partner', livesWithPartner);
+   agent.saveResponse(req.body.Caller, 'lives-with-partner', livesWithPartner, JENAVIEVE);
 
    if (livesWithPartner) {
        twiml.say(`I think that's really great. Stability is important.`, JENAVIEVE_VOICE);
@@ -174,7 +174,7 @@ jenavieve.post('/dating-optimism', twilio.webhook({ validate: false }), (req, re
        return res.send(twiml);
    }
 
-   agent.saveResponse(req.body.Caller, 'dating-optimism', optimism);
+   agent.saveResponse(req.body.Caller, 'dating-optimism', optimism, JENAVIEVE);
 
    if (optimism < 3) {
        twiml.say(`I'm sorry that you feel that way. It can be tough out there.`, JENAVIEVE_VOICE);
@@ -202,7 +202,7 @@ jenavieve.post('/love-style', twilio.webhook({ validate: false }), (req, res) =>
    }
 
 
-   agent.saveResponse(req.body.Caller, 'love-style', loveStyle.name);
+   agent.saveResponse(req.body.Caller, 'love-style', loveStyle.name, JENAVIEVE);
 
    twiml.say(`Ah, you're ${ loveStyle.pronunciation } too! Good to know!`, JENAVIEVE_VOICE);
 
