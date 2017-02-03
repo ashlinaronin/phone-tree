@@ -56,11 +56,12 @@ function randomFromArray(array) {
     return array[ Math.floor(Math.random() * array.length) ];
 }
 
-function saveResponse(phone, q, a) {
+function saveResponse(phone, question, answer, agent) {
     let response = {
-        'phone': phone,
-        'question': q,
-        'answer': a
+        phone,
+        question,
+        answer,
+        agent
     };
 
     ConsumerProfile.saveResponse(response);

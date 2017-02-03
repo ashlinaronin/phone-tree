@@ -17,7 +17,8 @@ let ConsumerProfileSchema = new mongoose.Schema({
         {
             question: String,
             answer: mongoose.Schema.Types.Mixed,
-            timestamp: Date
+            timestamp: Date,
+            agent: String
         }
     ],
     products: [ProductSchema]
@@ -27,6 +28,7 @@ ConsumerProfileSchema.statics.saveResponse = function(newEntry) {
     let newResponse = {
         question: newEntry.question,
         answer: newEntry.answer,
+        agent: newEntry.agent,
         timestamp: new Date()
     };
 
@@ -51,6 +53,7 @@ ConsumerProfileSchema.statics.saveResponse = function(newEntry) {
 };
 
 ConsumerProfileSchema.statics.retrieveResponse = function(phone, q) {
+    // TODO: only get latest response if many
     return ConsumerProfile
         .findOne({ phone: phone })
         .exec()
