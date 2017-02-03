@@ -12,11 +12,13 @@ const productDetails = require('./product-details');
 const products = require('./products');
 const test = require('./test');
 
+const SALES_VOICE = agent.getVoice('sales');
+
 router.post('/', twilio.webhook({ validate: false }), (req, res) => {
     let twiml = new twilio.TwimlResponse();
 
     twiml.say(`Thank you for calling Nectar. Please hold while we transfer you
-        to the next available representative.`);
+        to the next available representative.`, SALES_VOICE);
 
     // TODO: warm welcome for repeat callers
 

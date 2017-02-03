@@ -13,7 +13,7 @@ const COINTREAU_VOICE = agent.getVoice(COINTREAU);
 const sayings = {
     ASK_FOR_BIRTHDAY: `Hello! Thank you for calling Nectar. My name is Cointreau and
         I'll be your agent today. To give you the best consumer experience', I'll need
-        some more information about you. First of all, would you mind entering your birthday
+        some information about you. First of all, would you mind entering your birthday
         as a four digit number? For example, my birthday is May 8th, so I would enter
         zero-five-zero-eight. Go ahead and enter your birthday and then press the pound key.`,
     ASK_FOR_ZIPCODE: `It would also be very helpful to know where you're from. Could you
@@ -137,6 +137,8 @@ cointreau.post('/age', twilio.webhook({ validate: false }), (req, res) => {
         twiml.say(`That's crazy! My ${relative} is your age.`, COINTREAU_VOICE);
     }
 
+    twiml.pause();
+
     askForMonthlySpending(twiml);
 
     agent.redo(twiml, COINTREAU, 'age');
@@ -161,9 +163,14 @@ cointreau.post('/monthly-spending', twilio.webhook({ validate: false }), (req,re
        twiml.say(`You treat yourself well. I respect that.`, COINTREAU_VOICE)
    }
 
-   designProduct(req.body.Caller)
+   return designProduct(req.body.Caller)
        .then(() => {
            agent.transferToProducts(twiml, COINTREAU, sayings.THANK_YOU);
+           return res.send(twiml);
+       })
+       .catch(err => {
+           console.log('err designing cointreau product', err);
+           agent.onError(twiml, COINTREAU);
            return res.send(twiml);
        });
 });

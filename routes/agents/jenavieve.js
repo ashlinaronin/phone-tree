@@ -206,10 +206,15 @@ jenavieve.post('/love-style', twilio.webhook({ validate: false }), (req, res) =>
 
    twiml.say(`Ah, you're ${ loveStyle.pronunciation } too! Good to know!`, JENAVIEVE_VOICE);
 
-   designProduct(req.body.Caller, loveStyle.name)
+   return designProduct(req.body.Caller, loveStyle.name)
        .then(() => {
             agent.transferToProducts(twiml, JENAVIEVE, sayings.THANK_YOU);
             return res.send(twiml);
+       })
+       .catch(err => {
+           console.log('err designing jenny product', err);
+           agent.onError(twiml, JENAVIEVE);
+           return res.send(twiml);
        });
 });
 
