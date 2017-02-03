@@ -88,6 +88,9 @@ function saveImageForQuery(query) {
             return fetchImageResults(query)
                 .then(json => json.items[0].link)
                 .then(imageUrl =>  downloadAndSaveImage(imageUrl, query));
+        })
+        .catch(err => {
+            console.log('saved image query check err', err);
         });
 }
 

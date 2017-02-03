@@ -198,6 +198,11 @@ function designProduct(phone) {
             console.log('cointreau new product', newProduct);
 
             return productHelpers.saveProduct(newProduct);
+        })
+        .catch(err => {
+            console.log('err inner designing cointreau product', err);
+            agent.onError(twiml, COINTREAU);
+            return res.send(twiml);
         });
 }
 
