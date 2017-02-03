@@ -1,7 +1,7 @@
 const ConsumerProfile = require('../models/ConsumerProfile');
 const extensions = require('./extensions');
 const relatives = ['aunt', 'uncle', 'cousin', 'brother', 'sister', 'daughter', 'son'];
-const agents = ['cointreau', 'jenavieve', 'ricardo', 'ada']; // only functional agents
+const agents = ['cointreau', 'jenavieve']; // only functional agents
 const baseUrl = require('../config').baseUrl;
 
 const voices = {
