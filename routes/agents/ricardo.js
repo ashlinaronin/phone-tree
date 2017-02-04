@@ -34,8 +34,8 @@ const sayings = {
             7. Allergic to peanuts.
             8. Avoiding processed sugar.
         Press the number of each restriction that applies to you, then press pound.`,
-    ASK_ABOUT_HEIGHT: `OK, last question-- How tall are you? For example, I'm 5 foot 11, so I would just enter 5 1 1 on
-        the keypad. Go ahead and enter your height, then press pound.`,
+    ASK_ABOUT_HEIGHT: `OK, last question-- How tall are you? For example, I'm 5 foot 9, so I would just enter 5 9 on
+        the keypad. If I were 5 foot 11, I would enter 5 1 1. Go ahead and enter your height, then press pound.`,
     THANK_YOU: `Word. Thanks for sharing some of your vitals with a homie. I've saved your profile and
         I'll shoot ya over to products now. They'll take good care of ya. Have a blessed day and
         stay hydrated out there!`
