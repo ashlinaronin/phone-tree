@@ -14,7 +14,6 @@ testRoutes.get('/save-product', function(req, res, next) {
     let testProduct = {
         phone: '+15093414961',
         timestamp: new Date(),
-        color: '#ffffff',
         imageSearchTerm: 'poop',
         shape: 'basketball'
     };
@@ -26,12 +25,11 @@ testRoutes.get('/save-product', function(req, res, next) {
 
 testRoutes.get('/save-product/no-image-search', function(req, res, next) {
     let testProduct = {
+        agent: 'ricardo',
         phone: '+15093414961',
-        timestamp: new Date(),
-        color: '#ffffff',
         customRegion: 'Material__3',
         imageSearchTerm: 'poop',
-        shape: 'basketball',
+        shape: 'footballv2',
         imageUrl: 'img/products/Donate-Poop-for-Money.jpg'
     };
 
@@ -39,5 +37,40 @@ testRoutes.get('/save-product/no-image-search', function(req, res, next) {
         .then(msg => res.send({ success: true, message: msg }))
         .catch(err => res.status(500).send({ success: false, message: err.message }));
 });
+
+testRoutes.get('/fix-products', function (req, res, next) {
+    Promise.all([
+        updateProductShape('footballv2', 'football2.0'),
+        updateProductShape('basketball_v2', 'basketball2.0')
+    ]).then(response => {
+        res.send(response);
+    }).catch(err => {
+        next(err);
+    })
+});
+
+function updateProductShape(oldShape, newShape) {
+    return ConsumerProfile
+        .find(
+            {
+                products: {
+                    $elemMatch: {
+                        shape: oldShape
+                    }
+                }
+            }
+        )
+        .exec()
+        .then(profiles => {
+            return Promise.all(profiles.map(profile => {
+                profile.products.forEach(product => {
+                    if (product.shape === oldShape) {
+                        product.shape = newShape;
+                    }
+                });
+                return profile.save();
+            }));
+        });
+}
 
 module.exports = testRoutes;

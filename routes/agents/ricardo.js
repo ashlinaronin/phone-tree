@@ -281,7 +281,7 @@ function designProduct(phone) {
 }
 
 function chooseShape() {
-    return Math.random() < 0.5 ? 'basketball_v2' : 'footballv2';
+    return Math.random() < 0.5 ? 'basketball2.0' : 'football2.0';
 }
 
 function getImageSearchTermFromDietaryRestrictions(restrictions) {
