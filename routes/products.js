@@ -9,6 +9,8 @@ const baseUrl = require('../config').baseUrl;
 const PRODUCTS = 'products';
 const PRODUCTS_VOICE = agent.getVoice(PRODUCTS);
 
+const SMS_WAIT_TIME = 35000; // for realism
+
 products.post('/', twilio.webhook({validate: false}), (req, res) => {
     let twiml = new twilio.TwimlResponse();
 
@@ -21,9 +23,13 @@ products.post('/', twilio.webhook({validate: false}), (req, res) => {
             You should receive a link to your product on your phone in a few minutes. Have a great day and
             please call us again!`, PRODUCTS_VOICE);
 
-            sms.sendProduct(req.body.Caller, product.readableId)
-                .then(() => res.send(twiml))
-                .catch(err => console.log('error sending sms', err));
+            res.send(twiml);
+
+            setTimeout(() => {
+                sms.sendProduct(req.body.Caller, product.readableId)
+                    .then(() => console.log(`successfully saved product ${product.readableId}`))
+                    .catch(err => console.log('error sending sms', err));
+            }, SMS_WAIT_TIME);
         })
         .catch(err => {
             console.log('no product...', err);
