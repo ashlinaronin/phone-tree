@@ -1,6 +1,5 @@
 let products = require('express').Router();
 const twilio = require('twilio');
-const ConsumerProfile = require('../models/ConsumerProfile');
 const agent = require('../services/agent-helpers');
 const productHelpers = require('../services/product-helpers');
 const sms = require('../services/sms');
