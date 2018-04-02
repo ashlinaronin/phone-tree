@@ -3,7 +3,7 @@ let cfg = {};
 // HTTP Port to run our web application
 cfg.port = process.env.PORT || 2000;
 
-cfg.mongoUrl = process.env.MONGO_URL || 'mongodb://localhost/';
+cfg.mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1/';
 
 cfg.baseUrl = process.env.BASE_URL || '';
 
