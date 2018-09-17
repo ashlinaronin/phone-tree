@@ -20,8 +20,6 @@ router.post('/', twilio.webhook({ validate: false }), (req, res) => {
     twiml.say(`Thank you for calling Nectar. Please hold while we transfer you
         to the next available representative.`, SALES_VOICE);
 
-    // TODO: warm welcome for repeat callers
-
     let selectedAgent = agent.randomAgent();
     let agentExtension = extensions.getDepartmentExtension(selectedAgent);
 
