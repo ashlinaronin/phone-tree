@@ -1,8 +1,8 @@
 const rp = require('request-promise-native');
-const geocodeEndpoint = 'http://maps.googleapis.com/maps/api/geocode/json';
+const geocodeEndpoint = 'https://maps.googleapis.com/maps/api/geocode/json';
 
 function getLocality(zipcode) {
-    const requestUrl = geocodeEndpoint + '?address=' + zipcode;
+    const requestUrl = geocodeEndpoint + '?address=' + zipcode + '&key=' + process.env.GOOGLE_GEOCODE_KEY;
     return rp(requestUrl)
         .then((body) => {
             let addressComponents = JSON.parse(body).results[0].address_components;
