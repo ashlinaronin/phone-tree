@@ -36,6 +36,7 @@ cointreau.post('/', twilio.webhook({ validate: false }), (req, res) => {
 
     // temporarily disabled due to bot abuse driving up account charges
     // agent.redo(twiml, COINTREAU, '');
+    twiml.say("I'm sorry, I didn't get a response. Feel free to give us a call again.", COINTREAU_VOICE);
 
     return res.send(twiml);
 });
