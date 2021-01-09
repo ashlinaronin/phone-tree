@@ -34,7 +34,8 @@ cointreau.post('/', twilio.webhook({ validate: false }), (req, res) => {
 
     askForBirthday(twiml);
 
-    agent.redo(twiml, COINTREAU, '');
+    // temporarily disabled due to bot abuse driving up account charges
+    // agent.redo(twiml, COINTREAU, '');
 
     return res.send(twiml);
 });

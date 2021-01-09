@@ -50,7 +50,8 @@ jenavieve.post('/', twilio.webhook({ validate: false }), (req, res) => {
 
     askForRelationshipStatus(twiml);
 
-    agent.redo(twiml, JENAVIEVE, '');
+    // temporarily disabled due to bot abuse driving up account charges
+    // agent.redo(twiml, JENAVIEVE, '');
 
     res.send(twiml);
 });

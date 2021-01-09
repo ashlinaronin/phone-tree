@@ -60,7 +60,8 @@ ricardo.post('/', twilio.webhook({ validate: false }), (req, res) => {
 
     agent.ask(twiml, RICARDO, 'workout-frequency', sayings.ASK_ABOUT_WORKOUT_FREQUENCY);
 
-    agent.redo(twiml, RICARDO, '');
+    // temporarily disabled due to bot abuse driving up account charges
+    // agent.redo(twiml, RICARDO, '');
 
     res.send(twiml);
 });
